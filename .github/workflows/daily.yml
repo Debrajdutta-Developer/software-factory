@@ -2,9 +2,9 @@ name: Autonomous Daily Software Factory
 
 on:
   schedule:
-    # প্রতিদিন ভারতীয় সময় সকাল ৮:৩০ এ (UTC 03:00) নিজে নিজে চলবে
+    # প্রতিদিন সকাল ৮:৩০ এ (IST) নিজে নিজে চলবে
     - cron: '0 3 * * *'
-  workflow_dispatch: # চাইলে গিটহাবের বাটন চেপেও চালানো যাবে
+  workflow_dispatch:
 
 jobs:
   build-and-push:
@@ -33,7 +33,7 @@ jobs:
         run: |
           git config --global user.name "Autonomous Factory Bot"
           git config --global user.email "bot@factory.local"
-          git add builds/ PROJECT_HISTORY.md
+          git add -A
           git commit -m "feat(daily): autonomous project release $(date +'%Y-%m-%d') [skip ci]" || echo "No changes"
           git push origin main
 
