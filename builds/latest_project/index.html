@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ContractPulse - Enterprise API Contract Studio & Mock Engine</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div id="app" class="app-container">
+    <!-- Top Navigation Header -->
+    <header class="top-header">
+      <div class="brand-section">
+        <div class="logo-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <h1>ContractPulse</h1>
+          <span class="badge build-badge">v2.4 Enterprise</span>
+        </div>
+      </div>
+
+      <!-- Quick Environment Controls -->
+      <div class="env-controls">
+        <div class="env-indicator">
+          <span class="status-dot online"></span>
+          <span class="env-name" id="active-spec-name">Stripe-like Payment API v2.1</span>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="toggle-group">
+          <label class="toggle-switch" title="Inject synthetic network latency">
+            <input type="checkbox" id="toggle-latency" checked>
+            <span class="slider"></span>
+          </label>
+          <span class="toggle-label">Latency (<span id="latency-val">120ms</span>)</span>
+        </div>
+
+        <div class="toggle-group">
+          <label class="toggle-switch" title="Simulate periodic network 500/429 errors">
+            <input type="checkbox" id="toggle-chaos">
+            <span class="slider chaos"></span>
+          </label>
+          <span class="toggle-label">Chaos Mode</span>
+        </div>
+
+        <div class="divider"></div>
+
+        <button class="btn btn-secondary btn-sm" id="btn-load-sample">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+          Load Preset Spec
+        </button>
+        <button class="btn btn-primary btn-sm" id="btn-export-all">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+          Export Studio Bundle
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Workspace Navigation & Body Layout -->
+    <div class="main-layout">
+      <!-- Navigation Sidebar -->
+      <aside class="sidebar">
+        <nav class="nav-menu">
+          <button class="nav-item active" data-tab="tab-workspace">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+            <span>API Workspace</span>
+          </button>
+          <button class="nav-item" data-tab="tab-diff">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="18" r="3"></circle><circle cx="6" cy="6" r="3"></circle><path d="M6 21V9a9 9 0 0 0 9 9"></path></svg>
+            <span>Spec Diff Auditor</span>
+            <span class="badge diff-count-badge" id="diff-alert-badge">3</span>
+          </button>
+          <button class="nav-item" data-tab="tab-flow">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+            <span>Sequence Simulator</span>
+          </button>
+          <button class="nav-item" data-tab="tab-mock-rules">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+            <span>Mock Engine Rules</span>
+          </button>
+          <button class="nav-item" data-tab="tab-compliance">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+            <span>Contract Test Suite</span>
+          </button>
+        </nav>
+
+        <div class="sidebar-footer">
+          <div class="mock-status-card">
+            <div class="card-header-mini">
+              <span class="pulse-ring"></span>
+              <span>Synthetic Engine</span>
+            </div>
+            <p>Interceptors active for <code>/api/v2/*</code></p>
+            <div class="mini-metrics">
+              <div><small>Requests</small><strong id="metric-requests">42</strong></div>
+              <div><small>Avg Time</small><strong id="metric-avg-time">118ms</strong></div>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Content Views -->
+      <main class="content-area">
+
+        <!-- TAB 1: API Workspace & Live Sandbox -->
+        <section id="tab-workspace" class="tab-page active">
+          <div class="workspace-grid">
+            <!-- Left: Endpoint Directory -->
+            <div class="panel directory-panel">
+              <div class="panel-header">
+                <h3>Endpoints</h3>
+                <span class="pill-count" id="endpoint-count">6 Endpoints</span>
+              </div>
+              <div class="search-box">
+                <input type="text" id="endpoint-search" placeholder="Filter endpoints or tags...">
+              </div>
+              <div class="endpoint-tree" id="endpoint-tree-list">
+                <!-- Dynamically Populated -->
+              </div>
+            </div>
+
+            <!-- Right: Endpoint Sandbox & Inspector -->
+            <div class="panel sandbox-panel">
+              <div id="sandbox-active-view">
+                <div class="endpoint-hero">
+                  <div class="endpoint-hero-header">
+                    <span class="method-tag tag-post" id="sbx-method">POST</span>
+                    <input type="text" class="url-input" id="sbx-url" value="/api/v2/payments/charge">
+                    <button class="btn btn-accent" id="btn-send-request">
+                      <span>Send Request</span>
+                      <kbd>Ctrl+Enter</kbd>
+                    </button>
+                  </div>
+                  <div class="endpoint-desc" id="sbx-description">
+                    Processes a credit card or digital wallet transaction securely. Validates schema payload and returns transaction authorization token.
+                  </div>
+                </div>
+
+                <!-- Tabs inside Sandbox: Headers / Body / Response / Schema -->
+                <div class="sandbox-tabs-nav">
+                  <button class="sbx-tab-btn active" data-sbx="sbx-body">Request Body</button>
+                  <button class="sbx-tab-btn" data-sbx="sbx-headers">Headers (2)</button>
+                  <button class="sbx-tab-btn" data-sbx="sbx-schema">Expected Schema</button>
+                  <button class="sbx-tab-btn" data-sbx="sbx-response">Response Preview</button>
+                </div>
+
+                <div class="sandbox-tab-content active" id="sbx-body">
+                  <div class="editor-toolbar">
+                    <span>JSON Payload Editor</span>
+                    <div class="toolbar-actions">
+                      <button class="btn-text" id="btn-gen-dynamic">⚡ Auto-Generate Dynamic Data</button>
+                      <button class="btn-text" id="btn-format-json">Format</button>
+                    </div>
+                  </div>
+                  <textarea id="sbx-request-json" class="code-editor" spellcheck="false">{
+  "amount": 4999,
+  "currency": "USD",
+  "source": "tok_visa_debit_standard",
+  "description": "Enterprise Subscription - Monthly Tier",
+  "customer": {
+    "email": "dev.lead@acme-corp.io",
+    "metadata": {
+      "tenant_id": "tenant_9942_cx"
+    }
+  }
+}</textarea>
+                </div>
+
+                <div class="sandbox-tab-content" id="sbx-headers">
+                  <div class="table-container">
+                    <table class="data-table">
+                      <thead>
+                        <tr>
+                          <th>Header Key</th>
+                          <th>Value</th>
+                          <th>Type</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td><code>Authorization</code></td>
+                          <td><code>Bearer sk_test_9948271038472910</code></td>
+                          <td><span class="badge info">Required</span></td>
+                        </tr>
+                        <tr>
+                          <td><code>Content-Type</code></td>
+                          <td><code>application/json</code></td>
+                          <td><span class="badge info">Required</span></td>
+                        </tr>
+                        <tr>
+                          <td><code>X-Idempotency-Key</code></td>
+                          <td><code>idemp_seq_8839210</code></td>
+                          <td><span class="badge">Optional</span></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                <div class="sandbox-tab-content" id="sbx-schema">
+                  <div class="code-preview" id="sbx-schema-tree">
+                    <!-- JSON Schema preview populated dynamically -->
+                  </div>
+                </div>
+
+                <div class="sandbox-tab-content" id="sbx-response">
+                  <div class="response-status-bar" id="response-status-bar">
+                    <div class="status-indicator-group">
+                      <span class="status-badge status-200" id="res-status-code">200 OK</span>
+                      <span class="meta-item">Time: <strong id="res-time">112ms</strong></span>
+                      <span class="meta-item">Size: <strong id="res-size">482 B</strong></span>
+                      <span class="meta-item">Compliance: <strong class="text-success" id="res-contract-status">✓ Schema Valid</strong></span>
+                    </div>
+                  </div>
+                  <pre class="code-preview" id="sbx-response-json">{
+  "status": "awaiting_request"
+}</pre>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- TAB 2: Spec Diff Auditor & Breaking Changes -->
+        <section id="tab-diff" class="tab-page">
+          <div class="diff-header-bar">
+            <div>
+              <h2>API Contract Diff & Breaking Change Auditor</h2>
+              <p>Compare production API v1.4 specification against incoming v2.0 release candidate.</p>
+            </div>
+            <div class="diff-selector-group">
+              <select id="diff-version-a" class="select-input">
+                <option value="v1.4">Version 1.4 (Current Prod)</option>
+              </select>
+              <span class="diff-vs">VS</span>
+              <select id="diff-version-b" class="select-input">
+                <option value="v2.0">Version 2.0 (Release Candidate)</option>
+              </select>
+              <button class="btn btn-primary" id="btn-run-diff">Re-Analyze Contracts</button>
+            </div>
+          </div>
+
+          <!-- Summary Metrics Cards -->
+          <div class="metrics-grid">
+            <div class="metric-card danger">
+              <span class="metric-num" id="diff-critical-count">2</span>
+              <span class="metric-label">Breaking Changes</span>
+            </div>
+            <div class="metric-card warning">
+              <span class="metric-num" id="diff-warning-count">1</span>
+              <span class="metric-label">Deprecations</span>
+            </div>
+            <div class="metric-card success">
+              <span class="metric-num" id="diff-success-count">3</span>
+              <span class="metric-label">Non-Breaking Additions</span>
+            </div>
+            <div class="metric-card info">
+              <span class="metric-num">98.4%</span>
+              <span class="metric-label">Backward Compatibility Score</span>
+            </div>
+          </div>
+
+          <!-- Diff Results Breakdown -->
+          <div class="panel diff-panel">
+            <div class="panel-header">
+              <h3>Detected Contract Mutations</h3>
+              <div class="filter-pills">
+                <button class="pill-filter active" data-filter="all">All Changes</button>
+                <button class="pill-filter" data-filter="breaking">Breaking Only</button>
+                <button class="pill-filter" data-filter="additions">Additions Only</button>
+              </div>
+            </div>
+            <div class="diff-list" id="diff-results-list">
+              <!-- Dynamically Populated by Diff Engine -->
+            </div>
+          </div>
+        </section>
+
+        <!-- TAB 3: Workflow Sequence Pipeline Simulator -->
+        <section id="tab-flow" class="tab-page">
+          <div class="flow-header-bar">
+            <div>
+              <h2>Multi-Step Workflow Sequence Simulator</h2>
+              <p>Test stateful end-to-end API chains with dynamic token passing and contextual payload assertions.</p>
+            </div>
+            <div class="flow-actions">
+              <button class="btn btn-secondary" id="btn-add-step">+ Add Step</button>
+              <button class="btn btn-accent" id="btn-run-sequence">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                Execute Sequence Pipeline
+              </button>
+            </div>
+          </div>
+
+          <!-- Sequence Steps Interactive Visual Pipeline -->
+          <div class="sequence-container">
+            <div class="pipeline-timeline" id="sequence-steps-list">
+              <!-- Step items rendered dynamically -->
+            </div>
+
+            <!-- Execution Logs Panel -->
+            <div class="panel sequence-log-panel">
+              <div class="panel-header">
+                <h3>Execution Run Logs & Context Store</h3>
+                <button class="btn-text" id="btn-clear-logs">Clear Logs</button>
+              </div>
+              <div class="log-output" id="sequence-log-output">
+                <div class="log-line info">[System] Sequence Simulator initialized. Ready for execution.</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- TAB 4: Mock Engine Rules & Custom Injectors -->
+        <section id="tab-mock-rules" class="tab-page">
+          <div class="mock-rules-header">
+            <h2>Dynamic Mock Rules & Custom Synthetic Injectors</h2>
+            <p>Customize endpoint behavioral overrides, stateful responses, and mock rule conditions.</p>
+          </div>
+
+          <div class="grid-two-col">
+            <div class="panel">
+              <div class="panel-header">
+                <h3>Active Rule Overrides</h3>
+                <button class="btn btn-secondary btn-sm" id="btn-new-rule">+ New Rule</button>
+              </div>
+              <div class="rule-list" id="mock-rules-list">
+                <!-- Mock rules loaded here -->
+              </div>
+            </div>
+
+            <div class="panel">
+              <div class="panel-header">
+                <h3>Synthetic Data Generator Config</h3>
+              </div>
+              <div class="rule-form">
+                <div class="form-group">
+                  <label>Override Status Code for <code>/api/v2/payments/*</code></label>
+                  <select id="mock-status-override" class="select-input">
+                    <option value="200">200 OK (Default Mock Payload)</option>
+                    <option value="201">201 Resource Created</option>
+                    <option value="400">400 Bad Request (Validation Error)</option>
+                    <option value="401">401 Unauthorized (Invalid Key)</option>
+                    <option value="429">429 Rate Limit Exceeded</option>
+                    <option value="500">500 Internal Server Error</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label>Artificial Response Delay Jitter</label>
+                  <input type="range" id="slider-latency" min="0" max="2500" value="120" class="slider-control">
+                  <div class="slider-display">Selected Delay: <strong id="slider-latency-text">120ms</strong></div>
+                </div>
+
+                <div class="form-group">
+                  <label>Dynamic Faker Rules syntax</label>
+                  <p class="help-text">Inject dynamic expressions into JSON request payloads or response overrides:</p>
+                  <ul class="help-list">
+                    <li><code>{{$uuid}}</code> &mdash; Generates unique RFC4122 v4 UUID</li>
+                    <li><code>{{$timestamp}}</code> &mdash; Current ISO 8601 Timestamp</li>
+                    <li><code>{{$randomEmail}}</code> &mdash; Generates localized tech email</li>
+                    <li><code>{{$randomInt}}</code> &mdash; Uniform integer between 1000 and 99999</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- TAB 5: Contract Test Suite & Compliance -->
+        <section id="tab-compliance" class="tab-page">
+          <div class="compliance-header">
+            <div>
+              <h2>Contract Compliance Audit Suite</h2>
+              <p>Automated verification of active spec endpoints against OpenAPI 3.1 integrity rules.</p>
+            </div>
+            <button class="btn btn-primary" id="btn-run-suite">Run Complete Suite Audit</button>
+          </div>
+
+          <div class="table-container panel">
+            <table class="data-table" id="compliance-table">
+              <thead>
+                <tr>
+                  <th>Audit Rule / Test Case</th>
+                  <th>Target Endpoint</th>
+                  <th>Compliance Standard</th>
+                  <th>Status</th>
+                  <th>Latency Score</th>
+                </tr>
+              </thead>
+              <tbody id="compliance-results-body">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- Modal Component for Preset Specs -->
+  <div class="modal-overlay" id="preset-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Select Enterprise Specification Template</h3>
+        <button class="close-modal" id="btn-close-modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="preset-card active-preset" data-preset="payment">
+          <div class="preset-title">💳 Stripe-like Payment & Billing Microservice v2.1</div>
+          <p class="preset-desc">Includes payment intents, customer records, charge authorizations, refund webhooks, and idempotency headers.</p>
+        </div>
+        <div class="preset-card" data-preset="ecommerce">
+          <div class="preset-title">🛒 E-Commerce Order Fulfillment API v3.0</div>
+          <p class="preset-desc">Includes catalog inventory lookup, cart creation, order processing, and shipment state webhooks.</p>
+        </div>
+        <div class="preset-card" data-preset="healthcare">
+          <div class="preset-title">🏥 FHIR Healthcare Patient Records API v1.0</div>
+          <p class="preset-desc">HL7 / FHIR compliant patient metadata endpoints, clinical observation metrics, and OAuth scopes.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,39 @@
+name: Autonomous Daily Software Factory
+
+on:
+  schedule:
+    # প্রতিদিন ভারতীয় সময় সকাল ৮:৩০ এ (UTC 03:00) নিজে নিজে চলবে
+    - cron: '0 3 * * *'
+  workflow_dispatch: # চাইলে গিটহাবের বাটন চেপেও চালানো যাবে
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Dependencies
+        run: pip install requests
+
+      - name: Run Factory Agent
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: python agent.py
+
+      - name: Commit and Push New Project
+        run: |
+          git config --global user.name "Autonomous Factory Bot"
+          git config --global user.email "bot@factory.local"
+          git add builds/ PROJECT_HISTORY.md
+          git commit -m "feat(daily): autonomous project release $(date +'%Y-%m-%d') [skip ci]" || echo "No changes"
+          git push origin main
+
