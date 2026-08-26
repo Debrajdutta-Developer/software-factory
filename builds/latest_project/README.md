@@ -1,93 +1,129 @@
-# ContractPulse — Enterprise API Contract Studio & Intelligent Mock Engine
+# PayloadRelay - Local-First API & Webhook Studio
 
-> **Problem Statement:** Modern microservice and frontend/backend engineering teams face frequent API specification drift, unexpected breaking changes in production, high setup overhead for realistic mock servers, and complex multi-step integration testing bottlenecks. Traditional tools are either overly heavyweight, require remote cloud setups, or fail to catch breaking schema diffs early in the local development lifecycle.
+> **Zero-Telemetry, Offline-First API Sandbox, Webhook Inspector, JSON Schema Engine & Synthetic Payload Synthesizer.**
 
-**ContractPulse** is a 100% client-side, local-first API contract management suite, interactive spec auditor, dynamic mock engine, and multi-step sequence visualizer designed for enterprise software teams.
-
----
-
-## 🌟 Key Features
-
-1. **OpenAPI 3.0/3.1 & Schema Inspector**
-   - Browse endpoints, request payloads, header requirements, and nested schemas.
-   - Pre-loaded enterprise templates (Stripe-like Payment API, E-Commerce Microservices, Patient Healthcare Records API).
-   - In-browser interactive sandbox to simulate real API calls against dynamic mock engines.
-
-2. **Automated Breaking Change & Contract Diff Engine**
-   - Compare two versions of API specifications (Version A vs Version B).
-   - Instant categorization of schema diffs:
-     - 🔴 **Breaking Changes** (Removed endpoints, type mutations, added required parameters).
-     - 🟡 **Deprecations & Warnings** (Deprecated endpoints, field soft-deletions).
-     - 🟢 **Non-Breaking Additions** (New endpoints, optional query params, added response fields).
-
-3. **Dynamic In-Browser Mock Server & Traffic Controller**
-   - Live Fetch intercept simulation with configurable:
-     - Artificial Network Latency (0ms to 5000ms jitter).
-     - Simulated Failure Rates (0% to 100% random 500 Internal Error / 429 Rate Limit responses).
-     - Dynamic Payload Generation (UUIDs, ISO Timestamps, Random Emails, Currencies, Hashes).
-     - Status code overrides (200 OK, 201 Created, 400 Bad Request, 401 Unauthorized, 404 Not Found, 500 Error).
-
-4. **Multi-Step Workflow Sequence Pipeline Simulator**
-   - Visually model and execute complex API sequences (e.g., `POST /auth/token` ➡️ `POST /customers` ➡️ `POST /payments/charge`).
-   - Automated context extraction: dynamically extract fields from step responses (e.g., `{{auth.token}}`) and pass them into subsequent request headers/bodies.
-   - Real-time step execution visualization with time-to-first-byte metrics and assertion status.
-
-5. **Contract Compliance & Assertion Test Suite**
-   - Run automated validation rules against active schemas.
-   - Generates instant pass/fail audit reports exportable for CI/CD documentation.
-
-6. **Local-First & Zero Lock-in Export Options**
-   - Export mock configurations, spec diff reports, postman-compatible collections, and project states directly as JSON/Markdown files.
+![PayloadRelay Interface](https://img.shields.io/badge/Security-100%25%20Local%20%26%20Zero--Telemetry-emerald?style=for-the-badge)
+![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)
 
 ---
 
-## 🏗️ Architecture & Technical Design
+## 💡 The Problem
 
-ContractPulse is built as a zero-dependency, high-performance Web Application leveraging pure ES6 JavaScript, HTML5, and custom reactive state architecture.
+Modern software teams face significant friction and privacy risks when developing, testing, and debugging APIs:
+1. **Data Leakage & Privacy Violations**: Popular online tools like Postman, Webhook.site, and JSON formatters transmit authorization tokens, PII, production secrets, and customer data to third-party cloud servers.
+2. **Context Switching & Tool Fragmentation**: Developers juggle separate tools for sending requests, converting JSON to TypeScript/Zod types, decoding JWTs, generating mock datasets, and inspecting headers.
+3. **Flaky Mocking Environments**: Backend endpoints under development are often incomplete or unreliable, blocking frontend development and end-to-end automated testing.
+4. **Payload Validation Overhead**: Manually creating JSON Schemas or Pydantic/Zod validation models from raw API payloads is tedious and prone to human error.
+
+---
+
+## 🚀 The Solution: PayloadRelay
+
+**PayloadRelay** is an all-in-one, 100% client-side web application designed for high-velocity software engineering. It operates entirely in the browser with **zero external server dependencies, zero telemetry, and complete offline availability**.
+
+### Core Capabilities
+
+- 📡 **API Request Builder & Virtual Network Interceptor**:
+  - Dispatch real HTTP requests (`fetch`) or simulate mock local responses with custom latency and status codes.
+  - Auto-parse cURL commands into structured requests.
+  - Export code snippets instantly to `JavaScript fetch`, `Python requests`, `cURL`, and `Go net/http`.
+
+- ⚡ **Payload Studio & Multi-Format Schema Synthesizer**:
+  - Paste raw JSON and instantly infer standard **JSON Schema (Draft-07)**.
+  - Auto-generate strongly typed schemas: **TypeScript Interfaces**, **Zod Validation Schemas**, **Python Pydantic Models**, and **Rust Structs**.
+  - Built-in strict JSON syntax validation, formatting, and minify engine.
+
+- 🎲 **Synthetic Data Generator Engine**:
+  - Synthesize up to 500 structured mock JSON or CSV records on demand.
+  - Pre-built industry templates: *E-Commerce Orders*, *SaaS User Profiles*, *Financial Transactions*, *IoT Sensor Streams*, and *API Security Logs*.
+  - Flexible schema builder: UUIDv4, ISO Timestamps, Emails, Names, Currency, Coordinates, Custom Enums, and Numerical Ranges.
+
+- 🔑 **JWT & Security Header Inspector**:
+  - Decode and inspect JWT Headers, Payloads, and Expiration claims locally.
+  - Calculate claim expiration status (`exp`, `iat`, `nbf`) with real-time countdowns.
+  - Evaluate response security headers against modern web defense standards (CORS, CSP, HSTS, X-Content-Type-Options).
+
+- 💾 **IndexedDB Local Storage**:
+  - High-performance local persistence for request history, custom schemas, and saved environment collections.
+  - Quick search, filtering, tags, and one-click JSON collection import/export.
+
+---
+
+## 🏗 Architecture & Tech Stack
+
+PayloadRelay is built with standard Web API standards for maximum compatibility and performance:
 
 ```
-       ┌────────────────────────────────────────────────────────┐
-       │                   ContractPulse UI                     │
-       │  (Workspace | Spec Diff | Mock Engine | Flow Simulator) │
-       └───────────────────────────┬────────────────────────────┘
-                                   │
-              ┌────────────────────┼────────────────────┐
-              ▼                    ▼                    ▼
-     ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐
-     │  Spec Parse &   │  │ Contract Diff & │  │ Workflow Engine │
-     │ Dynamic Engine  │  │ Audit Analyzer  │  │ & State Mapper  │
-     └────────┬────────┘  └────────┬────────┘  └────────┬────────┘
-              │                    │                    │
-              └────────────────────┼────────────────────┘
-                                   ▼
-       ┌────────────────────────────────────────────────────────┐
-       │             In-Browser Synthetic Network               │
-       │     (Latency Injector, Chaos Engine, Dynamic Mock)     │
-       └────────────────────────────────────────────────────────┘
++-----------------------------------------------------------------------+
+|                       Browser Client Layer                           |
+|                                                                       |
+|  +---------------------+  +--------------------+  +----------------+  |
+|  | Request Builder     |  | Payload Studio     |  | Synthetic      |  |
+|  | & cURL Converter    |  | & Schema Engine    |  | Data Generator |  |
+|  +----------+----------+  +---------+----------+  +-------+--------+  |
+|             |                       |                     |           |
+|  +----------v-----------------------v---------------------v--------+  |
+|  |                     PayloadRelay Core Engine                    |  |
+|  |  - Virtual HTTP Dispatcher     - Code Generator (TS/Zod/Py/Rust)  |  |
+|  |  - JWT Decoder Engine          - Rule-Based Mock Synthesizer      |  |
+|  +----------------------------------+------------------------------+  |
+|                                     |                                 |
+|  +----------------------------------v------------------------------+  |
+|  |               Persistence Layer (IndexedDB / WebStorage)        |  |
+|  +-----------------------------------------------------------------+  |
++-----------------------------------------------------------------------+
 ```
 
----
-
-## 🚀 Quick Start Guide
-
-1. Open `index.html` in any modern web browser (Chrome, Firefox, Edge, Safari). No `npm install`, node runtime, or server backend required!
-2. **Explore Pre-loaded APIs:** Click "Load Sample" in the top bar to toggle between Payment, E-Commerce, or Healthcare specs.
-3. **Execute Requests:** Select an endpoint in the Workspace tab, adjust params or JSON body, and click **Send Request**.
-4. **Audit Spec Diff:** Switch to the **Spec Diff Auditor** tab, select Version 1.0 vs 2.0, and review automatically highlighted breaking changes.
-5. **Run Workflow Pipelines:** Switch to the **Workflow Simulator** tab and hit **Execute Sequence** to watch dynamic multi-step token propagation in real-time.
+- **Frontend**: HTML5, Modern Modular CSS (Variables, Flexbox, CSS Grid), Vanilla JavaScript (ES2023+).
+- **Storage Engine**: Browser `IndexedDB` API with `localStorage` fallback.
+- **Dependencies**: **Zero** external libraries, zero CDN calls, zero node_modules required for execution.
 
 ---
 
-## 💻 Keyboard Shortcuts
+## 🛠 Quick Start
 
-- `Ctrl / Cmd + Enter` : Send Request in active endpoint sandbox.
-- `Alt + 1` : Switch to Spec Workspace.
-- `Alt + 2` : Switch to Spec Diff Auditor.
-- `Alt + 3` : Switch to Workflow Simulator.
-- `Alt + 4` : Switch to Dynamic Mock Configurator.
+1. Download or clone this repository.
+2. Open `index.html` in any modern web browser (Chrome, Firefox, Safari, Edge, Brave).
+3. No build step, node runtime, or server required!
+
+### Offline PWA Installation
+Double click `index.html` or host via any static web server (e.g., `python -m http.server 8000` or GitHub Pages).
 
 ---
 
-## 🔒 Privacy & Security
+## 📖 Usage Guide
 
-ContractPulse executes 100% of data parsing, mock generation, and schema diffing inside your web browser's local sandbox memory. No payloads, API specs, or keys are ever sent to external cloud servers.
+### 1. Request Builder & cURL Import
+- Paste a cURL command into the input modal or click **Import cURL**.
+- Modify headers, auth bearer tokens, or query parameters.
+- Toggle between **Real HTTP** execution or **Virtual Mock Response** mode to test offline user experiences.
+
+### 2. Payload Studio (Type & Schema Generation)
+- Navigate to the **Payload Studio** tab.
+- Paste any JSON object or array into the source input.
+- Click **Infer Schema** to view generated **JSON Schema**, **TypeScript**, **Zod**, **Python Pydantic**, or **Rust Structs**.
+- Download or copy the code directly into your code repository.
+
+### 3. Synthetic Data Synthesizer
+- Navigate to **Data Synthesizer**.
+- Select a preset (e.g., *E-Commerce Orders*) or add custom field definitions.
+- Set the desired record count (e.g., `50`).
+- Click **Generate Synthetic Data** and export as `.json` or `.csv`.
+
+### 4. JWT & Security Analysis
+- Navigate to **JWT & Header Inspector**.
+- Paste an encoded JWT string to view decoded header JSON, payload claims, and token expiration analysis.
+- Inspect incoming HTTP headers for standard security practices.
+
+---
+
+## 🔒 Security & Privacy Guarantee
+
+- **Zero Network Transmission**: PayloadRelay does NOT send telemetry, logs, or analytics to any backend server.
+- **Local Key Storage**: API tokens and JWTs remain isolated inside your browser's local sandbox environment.
+- **Compliance Ready**: Suitable for enterprise environments bound by HIPAA, GDPR, SOC2, and strict data privacy regulations.
+
+---
+
+## 📄 License
+Released under the [MIT License](LICENSE).

@@ -3,433 +3,450 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ContractPulse - Enterprise API Contract Studio & Mock Engine</title>
+  <title>PayloadRelay - Local-First API Studio & Payload Synthesizer</title>
   <link rel="stylesheet" href="style.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-  <div id="app" class="app-container">
-    <!-- Top Navigation Header -->
-    <header class="top-header">
-      <div class="brand-section">
-        <div class="logo-icon">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
-          </svg>
-        </div>
-        <div class="brand-text">
-          <h1>ContractPulse</h1>
-          <span class="badge build-badge">v2.4 Enterprise</span>
-        </div>
-      </div>
 
-      <!-- Quick Environment Controls -->
-      <div class="env-controls">
-        <div class="env-indicator">
-          <span class="status-dot online"></span>
-          <span class="env-name" id="active-spec-name">Stripe-like Payment API v2.1</span>
-        </div>
-
-        <div class="divider"></div>
-
-        <div class="toggle-group">
-          <label class="toggle-switch" title="Inject synthetic network latency">
-            <input type="checkbox" id="toggle-latency" checked>
-            <span class="slider"></span>
-          </label>
-          <span class="toggle-label">Latency (<span id="latency-val">120ms</span>)</span>
-        </div>
-
-        <div class="toggle-group">
-          <label class="toggle-switch" title="Simulate periodic network 500/429 errors">
-            <input type="checkbox" id="toggle-chaos">
-            <span class="slider chaos"></span>
-          </label>
-          <span class="toggle-label">Chaos Mode</span>
-        </div>
-
-        <div class="divider"></div>
-
-        <button class="btn btn-secondary btn-sm" id="btn-load-sample">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-          Load Preset Spec
-        </button>
-        <button class="btn btn-primary btn-sm" id="btn-export-all">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
-          Export Studio Bundle
-        </button>
-      </div>
-    </header>
-
-    <!-- Main Workspace Navigation & Body Layout -->
-    <div class="main-layout">
-      <!-- Navigation Sidebar -->
-      <aside class="sidebar">
-        <nav class="nav-menu">
-          <button class="nav-item active" data-tab="tab-workspace">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-            <span>API Workspace</span>
-          </button>
-          <button class="nav-item" data-tab="tab-diff">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="18" r="3"></circle><circle cx="6" cy="6" r="3"></circle><path d="M6 21V9a9 9 0 0 0 9 9"></path></svg>
-            <span>Spec Diff Auditor</span>
-            <span class="badge diff-count-badge" id="diff-alert-badge">3</span>
-          </button>
-          <button class="nav-item" data-tab="tab-flow">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
-            <span>Sequence Simulator</span>
-          </button>
-          <button class="nav-item" data-tab="tab-mock-rules">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
-            <span>Mock Engine Rules</span>
-          </button>
-          <button class="nav-item" data-tab="tab-compliance">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
-            <span>Contract Test Suite</span>
-          </button>
-        </nav>
-
-        <div class="sidebar-footer">
-          <div class="mock-status-card">
-            <div class="card-header-mini">
-              <span class="pulse-ring"></span>
-              <span>Synthetic Engine</span>
-            </div>
-            <p>Interceptors active for <code>/api/v2/*</code></p>
-            <div class="mini-metrics">
-              <div><small>Requests</small><strong id="metric-requests">42</strong></div>
-              <div><small>Avg Time</small><strong id="metric-avg-time">118ms</strong></div>
-            </div>
-          </div>
-        </div>
-      </aside>
-
-      <!-- Content Views -->
-      <main class="content-area">
-
-        <!-- TAB 1: API Workspace & Live Sandbox -->
-        <section id="tab-workspace" class="tab-page active">
-          <div class="workspace-grid">
-            <!-- Left: Endpoint Directory -->
-            <div class="panel directory-panel">
-              <div class="panel-header">
-                <h3>Endpoints</h3>
-                <span class="pill-count" id="endpoint-count">6 Endpoints</span>
-              </div>
-              <div class="search-box">
-                <input type="text" id="endpoint-search" placeholder="Filter endpoints or tags...">
-              </div>
-              <div class="endpoint-tree" id="endpoint-tree-list">
-                <!-- Dynamically Populated -->
-              </div>
-            </div>
-
-            <!-- Right: Endpoint Sandbox & Inspector -->
-            <div class="panel sandbox-panel">
-              <div id="sandbox-active-view">
-                <div class="endpoint-hero">
-                  <div class="endpoint-hero-header">
-                    <span class="method-tag tag-post" id="sbx-method">POST</span>
-                    <input type="text" class="url-input" id="sbx-url" value="/api/v2/payments/charge">
-                    <button class="btn btn-accent" id="btn-send-request">
-                      <span>Send Request</span>
-                      <kbd>Ctrl+Enter</kbd>
-                    </button>
-                  </div>
-                  <div class="endpoint-desc" id="sbx-description">
-                    Processes a credit card or digital wallet transaction securely. Validates schema payload and returns transaction authorization token.
-                  </div>
-                </div>
-
-                <!-- Tabs inside Sandbox: Headers / Body / Response / Schema -->
-                <div class="sandbox-tabs-nav">
-                  <button class="sbx-tab-btn active" data-sbx="sbx-body">Request Body</button>
-                  <button class="sbx-tab-btn" data-sbx="sbx-headers">Headers (2)</button>
-                  <button class="sbx-tab-btn" data-sbx="sbx-schema">Expected Schema</button>
-                  <button class="sbx-tab-btn" data-sbx="sbx-response">Response Preview</button>
-                </div>
-
-                <div class="sandbox-tab-content active" id="sbx-body">
-                  <div class="editor-toolbar">
-                    <span>JSON Payload Editor</span>
-                    <div class="toolbar-actions">
-                      <button class="btn-text" id="btn-gen-dynamic">⚡ Auto-Generate Dynamic Data</button>
-                      <button class="btn-text" id="btn-format-json">Format</button>
-                    </div>
-                  </div>
-                  <textarea id="sbx-request-json" class="code-editor" spellcheck="false">{
-  "amount": 4999,
-  "currency": "USD",
-  "source": "tok_visa_debit_standard",
-  "description": "Enterprise Subscription - Monthly Tier",
-  "customer": {
-    "email": "dev.lead@acme-corp.io",
-    "metadata": {
-      "tenant_id": "tenant_9942_cx"
-    }
-  }
-}</textarea>
-                </div>
-
-                <div class="sandbox-tab-content" id="sbx-headers">
-                  <div class="table-container">
-                    <table class="data-table">
-                      <thead>
-                        <tr>
-                          <th>Header Key</th>
-                          <th>Value</th>
-                          <th>Type</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr>
-                          <td><code>Authorization</code></td>
-                          <td><code>Bearer sk_test_9948271038472910</code></td>
-                          <td><span class="badge info">Required</span></td>
-                        </tr>
-                        <tr>
-                          <td><code>Content-Type</code></td>
-                          <td><code>application/json</code></td>
-                          <td><span class="badge info">Required</span></td>
-                        </tr>
-                        <tr>
-                          <td><code>X-Idempotency-Key</code></td>
-                          <td><code>idemp_seq_8839210</code></td>
-                          <td><span class="badge">Optional</span></td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-
-                <div class="sandbox-tab-content" id="sbx-schema">
-                  <div class="code-preview" id="sbx-schema-tree">
-                    <!-- JSON Schema preview populated dynamically -->
-                  </div>
-                </div>
-
-                <div class="sandbox-tab-content" id="sbx-response">
-                  <div class="response-status-bar" id="response-status-bar">
-                    <div class="status-indicator-group">
-                      <span class="status-badge status-200" id="res-status-code">200 OK</span>
-                      <span class="meta-item">Time: <strong id="res-time">112ms</strong></span>
-                      <span class="meta-item">Size: <strong id="res-size">482 B</strong></span>
-                      <span class="meta-item">Compliance: <strong class="text-success" id="res-contract-status">✓ Schema Valid</strong></span>
-                    </div>
-                  </div>
-                  <pre class="code-preview" id="sbx-response-json">{
-  "status": "awaiting_request"
-}</pre>
-                </div>
-
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- TAB 2: Spec Diff Auditor & Breaking Changes -->
-        <section id="tab-diff" class="tab-page">
-          <div class="diff-header-bar">
-            <div>
-              <h2>API Contract Diff & Breaking Change Auditor</h2>
-              <p>Compare production API v1.4 specification against incoming v2.0 release candidate.</p>
-            </div>
-            <div class="diff-selector-group">
-              <select id="diff-version-a" class="select-input">
-                <option value="v1.4">Version 1.4 (Current Prod)</option>
-              </select>
-              <span class="diff-vs">VS</span>
-              <select id="diff-version-b" class="select-input">
-                <option value="v2.0">Version 2.0 (Release Candidate)</option>
-              </select>
-              <button class="btn btn-primary" id="btn-run-diff">Re-Analyze Contracts</button>
-            </div>
-          </div>
-
-          <!-- Summary Metrics Cards -->
-          <div class="metrics-grid">
-            <div class="metric-card danger">
-              <span class="metric-num" id="diff-critical-count">2</span>
-              <span class="metric-label">Breaking Changes</span>
-            </div>
-            <div class="metric-card warning">
-              <span class="metric-num" id="diff-warning-count">1</span>
-              <span class="metric-label">Deprecations</span>
-            </div>
-            <div class="metric-card success">
-              <span class="metric-num" id="diff-success-count">3</span>
-              <span class="metric-label">Non-Breaking Additions</span>
-            </div>
-            <div class="metric-card info">
-              <span class="metric-num">98.4%</span>
-              <span class="metric-label">Backward Compatibility Score</span>
-            </div>
-          </div>
-
-          <!-- Diff Results Breakdown -->
-          <div class="panel diff-panel">
-            <div class="panel-header">
-              <h3>Detected Contract Mutations</h3>
-              <div class="filter-pills">
-                <button class="pill-filter active" data-filter="all">All Changes</button>
-                <button class="pill-filter" data-filter="breaking">Breaking Only</button>
-                <button class="pill-filter" data-filter="additions">Additions Only</button>
-              </div>
-            </div>
-            <div class="diff-list" id="diff-results-list">
-              <!-- Dynamically Populated by Diff Engine -->
-            </div>
-          </div>
-        </section>
-
-        <!-- TAB 3: Workflow Sequence Pipeline Simulator -->
-        <section id="tab-flow" class="tab-page">
-          <div class="flow-header-bar">
-            <div>
-              <h2>Multi-Step Workflow Sequence Simulator</h2>
-              <p>Test stateful end-to-end API chains with dynamic token passing and contextual payload assertions.</p>
-            </div>
-            <div class="flow-actions">
-              <button class="btn btn-secondary" id="btn-add-step">+ Add Step</button>
-              <button class="btn btn-accent" id="btn-run-sequence">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
-                Execute Sequence Pipeline
-              </button>
-            </div>
-          </div>
-
-          <!-- Sequence Steps Interactive Visual Pipeline -->
-          <div class="sequence-container">
-            <div class="pipeline-timeline" id="sequence-steps-list">
-              <!-- Step items rendered dynamically -->
-            </div>
-
-            <!-- Execution Logs Panel -->
-            <div class="panel sequence-log-panel">
-              <div class="panel-header">
-                <h3>Execution Run Logs & Context Store</h3>
-                <button class="btn-text" id="btn-clear-logs">Clear Logs</button>
-              </div>
-              <div class="log-output" id="sequence-log-output">
-                <div class="log-line info">[System] Sequence Simulator initialized. Ready for execution.</div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- TAB 4: Mock Engine Rules & Custom Injectors -->
-        <section id="tab-mock-rules" class="tab-page">
-          <div class="mock-rules-header">
-            <h2>Dynamic Mock Rules & Custom Synthetic Injectors</h2>
-            <p>Customize endpoint behavioral overrides, stateful responses, and mock rule conditions.</p>
-          </div>
-
-          <div class="grid-two-col">
-            <div class="panel">
-              <div class="panel-header">
-                <h3>Active Rule Overrides</h3>
-                <button class="btn btn-secondary btn-sm" id="btn-new-rule">+ New Rule</button>
-              </div>
-              <div class="rule-list" id="mock-rules-list">
-                <!-- Mock rules loaded here -->
-              </div>
-            </div>
-
-            <div class="panel">
-              <div class="panel-header">
-                <h3>Synthetic Data Generator Config</h3>
-              </div>
-              <div class="rule-form">
-                <div class="form-group">
-                  <label>Override Status Code for <code>/api/v2/payments/*</code></label>
-                  <select id="mock-status-override" class="select-input">
-                    <option value="200">200 OK (Default Mock Payload)</option>
-                    <option value="201">201 Resource Created</option>
-                    <option value="400">400 Bad Request (Validation Error)</option>
-                    <option value="401">401 Unauthorized (Invalid Key)</option>
-                    <option value="429">429 Rate Limit Exceeded</option>
-                    <option value="500">500 Internal Server Error</option>
-                  </select>
-                </div>
-
-                <div class="form-group">
-                  <label>Artificial Response Delay Jitter</label>
-                  <input type="range" id="slider-latency" min="0" max="2500" value="120" class="slider-control">
-                  <div class="slider-display">Selected Delay: <strong id="slider-latency-text">120ms</strong></div>
-                </div>
-
-                <div class="form-group">
-                  <label>Dynamic Faker Rules syntax</label>
-                  <p class="help-text">Inject dynamic expressions into JSON request payloads or response overrides:</p>
-                  <ul class="help-list">
-                    <li><code>{{$uuid}}</code> &mdash; Generates unique RFC4122 v4 UUID</li>
-                    <li><code>{{$timestamp}}</code> &mdash; Current ISO 8601 Timestamp</li>
-                    <li><code>{{$randomEmail}}</code> &mdash; Generates localized tech email</li>
-                    <li><code>{{$randomInt}}</code> &mdash; Uniform integer between 1000 and 99999</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- TAB 5: Contract Test Suite & Compliance -->
-        <section id="tab-compliance" class="tab-page">
-          <div class="compliance-header">
-            <div>
-              <h2>Contract Compliance Audit Suite</h2>
-              <p>Automated verification of active spec endpoints against OpenAPI 3.1 integrity rules.</p>
-            </div>
-            <button class="btn btn-primary" id="btn-run-suite">Run Complete Suite Audit</button>
-          </div>
-
-          <div class="table-container panel">
-            <table class="data-table" id="compliance-table">
-              <thead>
-                <tr>
-                  <th>Audit Rule / Test Case</th>
-                  <th>Target Endpoint</th>
-                  <th>Compliance Standard</th>
-                  <th>Status</th>
-                  <th>Latency Score</th>
-                </tr>
-              </thead>
-              <tbody id="compliance-results-body">
-                <!-- Dynamically populated -->
-              </tbody>
-            </table>
-          </div>
-        </section>
-
-      </main>
+  <!-- App Header / Top Navigation -->
+  <header class="app-header">
+    <div class="brand-title">
+      <svg class="brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+      </svg>
+      <span class="brand-name">Payload<span class="accent-text">Relay</span></span>
+      <span class="badge offline-badge">
+        <span class="dot"></span> Local-Only (100% Private)
+      </span>
     </div>
-  </div>
 
-  <!-- Modal Component for Preset Specs -->
-  <div class="modal-overlay" id="preset-modal">
-    <div class="modal-content">
+    <nav class="nav-tabs">
+      <button class="nav-btn active" data-tab="tab-request-builder">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+        Request Builder
+      </button>
+      <button class="nav-btn" data-tab="tab-payload-studio">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 18l6-6-6-6M8 6l-6 6 6 6"/></svg>
+        Payload Studio
+      </button>
+      <button class="nav-btn" data-tab="tab-data-synthesizer">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21 3.582 4 8 4s8-1.79 8-4"/></svg>
+        Data Synthesizer
+      </button>
+      <button class="nav-btn" data-tab="tab-jwt-inspector">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        JWT & Security
+      </button>
+    </nav>
+
+    <div class="header-actions">
+      <button id="btn-quick-curl" class="btn btn-secondary btn-sm">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 17l6-6-6-6M12 19h8"/></svg>
+        Import cURL
+      </button>
+      <button id="btn-clear-history" class="btn btn-secondary btn-sm" title="Clear History Log">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Application Body -->
+  <main class="app-container">
+
+    <!-- TAB 1: Request Builder -->
+    <section id="tab-request-builder" class="tab-pane active">
+      <div class="workspace-grid">
+        
+        <!-- Left Panel: Request Configuration -->
+        <div class="panel config-panel">
+          <div class="panel-header">
+            <h3>HTTP Request Setup</h3>
+            <div class="mode-toggle">
+              <label class="toggle-label">
+                <input type="checkbox" id="chk-virtual-mock">
+                <span class="slider"></span>
+                <span class="toggle-text">Virtual Mock Mode</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- URL Bar & Method -->
+          <div class="url-bar-container">
+            <select id="req-method" class="select-method">
+              <option value="GET">GET</option>
+              <option value="POST" selected>POST</option>
+              <option value="PUT">PUT</option>
+              <option value="PATCH">PATCH</option>
+              <option value="DELETE">DELETE</option>
+              <option value="OPTIONS">OPTIONS</option>
+            </select>
+            <input type="text" id="req-url" class="input-url" placeholder="https://api.example.com/v1/resource or /mock/user" value="https://jsonplaceholder.typicode.com/posts">
+            <button id="btn-send-request" class="btn btn-primary">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+              Send
+            </button>
+          </div>
+
+          <!-- Sub Tabs: Headers, Auth, Body -->
+          <div class="subtabs-bar">
+            <button class="subtab-btn active" data-subtab="req-subtab-headers">Headers (<span id="count-headers">2</span>)</button>
+            <button class="subtab-btn" data-subtab="req-subtab-auth">Auth</button>
+            <button class="subtab-btn" data-subtab="req-subtab-body">Body (JSON)</button>
+            <button class="subtab-btn" data-subtab="req-subtab-mock-settings">Mock Latency</button>
+          </div>
+
+          <!-- Subtab Content: Headers -->
+          <div id="req-subtab-headers" class="subtab-pane active">
+            <div class="table-container">
+              <table class="kv-table" id="headers-table">
+                <thead>
+                  <tr>
+                    <th style="width: 30px;"></th>
+                    <th>Header Key</th>
+                    <th>Header Value</th>
+                    <th style="width: 40px;"></th>
+                  </tr>
+                </thead>
+                <tbody id="headers-tbody">
+                  <tr>
+                    <td><input type="checkbox" checked class="kv-check"></td>
+                    <td><input type="text" class="input-cell kv-key" value="Content-Type"></td>
+                    <td><input type="text" class="input-cell kv-val" value="application/json"></td>
+                    <td><button class="btn-icon btn-remove-row">&times;</button></td>
+                  </tr>
+                  <tr>
+                    <td><input type="checkbox" checked class="kv-check"></td>
+                    <td><input type="text" class="input-cell kv-key" value="Accept"></td>
+                    <td><input type="text" class="input-cell kv-val" value="application/json"></td>
+                    <td><button class="btn-icon btn-remove-row">&times;</button></td>
+                  </tr>
+                </tbody>
+              </table>
+              <button id="btn-add-header" class="btn btn-secondary btn-xs">+ Add Header</button>
+            </div>
+          </div>
+
+          <!-- Subtab Content: Auth -->
+          <div id="req-subtab-auth" class="subtab-pane">
+            <div class="form-group">
+              <label>Authentication Type</label>
+              <select id="auth-type" class="select-full">
+                <option value="none">No Auth</option>
+                <option value="bearer">Bearer Token</option>
+                <option value="basic">Basic Auth</option>
+                <option value="apikey">API Key Header</option>
+              </select>
+            </div>
+            <div id="auth-fields" class="auth-fields-container">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+
+          <!-- Subtab Content: Body -->
+          <div id="req-subtab-body" class="subtab-pane">
+            <div class="editor-toolbar">
+              <button id="btn-format-req-body" class="btn btn-secondary btn-xs">Format JSON</button>
+              <button id="btn-sample-req-body" class="btn btn-secondary btn-xs">Load Sample Payload</button>
+            </div>
+            <textarea id="req-body-input" class="code-textarea" placeholder="Enter JSON payload...">{
+  "title": "PayloadRelay Test Request",
+  "body": "Testing local virtual execution & schema analysis.",
+  "userId": 42
+}</textarea>
+          </div>
+
+          <!-- Subtab Content: Mock Settings -->
+          <div id="req-subtab-mock-settings" class="subtab-pane">
+            <div class="form-group">
+              <label>Simulated Latency (ms): <span id="lbl-latency">150</span>ms</label>
+              <input type="range" id="input-latency" min="0" max="3000" step="50" value="150">
+            </div>
+            <div class="form-group">
+              <label>Simulated Status Code</label>
+              <select id="mock-status-code" class="select-full">
+                <option value="200">200 OK</option>
+                <option value="201">201 Created</option>
+                <option value="400">400 Bad Request</option>
+                <option value="401">401 Unauthorized</option>
+                <option value="404">404 Not Found</option>
+                <option value="500">500 Internal Server Error</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Code Snippet Generator section -->
+          <div class="panel-section code-export-section">
+            <div class="section-title">
+              <span>Client Code Generator</span>
+              <select id="select-export-lang" class="select-sm">
+                <option value="fetch">JS (Fetch API)</option>
+                <option value="python">Python (requests)</option>
+                <option value="curl">cURL Command</option>
+                <option value="go">Go (net/http)</option>
+              </select>
+            </div>
+            <div class="code-box-container">
+              <pre><code id="code-export-preview">// Code snippet will be generated here</code></pre>
+              <button id="btn-copy-code" class="btn btn-secondary btn-xs btn-copy">Copy Code</button>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Right Panel: Response Viewer & History -->
+        <div class="panel response-panel">
+          <div class="panel-header">
+            <h3>Response Inspector</h3>
+            <div class="response-metrics" id="response-metrics">
+              <span class="metric-badge status-neutral" id="res-status-badge">Status: ---</span>
+              <span class="metric-badge" id="res-time-badge">Time: 0ms</span>
+              <span class="metric-badge" id="res-size-badge">Size: 0 B</span>
+            </div>
+          </div>
+
+          <div class="subtabs-bar">
+            <button class="subtab-btn active" data-subtab="res-subtab-body">Response Body</button>
+            <button class="subtab-btn" data-subtab="res-subtab-headers">Headers (<span id="res-headers-count">0</span>)</button>
+            <button class="subtab-btn" data-subtab="res-subtab-history">History Log</button>
+          </div>
+
+          <div id="res-subtab-body" class="subtab-pane active flex-pane">
+            <div class="response-toolbar">
+              <input type="text" id="res-filter-key" class="input-sm" placeholder="Search JSON response...">
+              <button id="btn-copy-response" class="btn btn-secondary btn-xs">Copy JSON</button>
+            </div>
+            <div class="code-box-container full-height">
+              <pre><code id="res-body-preview" class="json-highlight">// Send a request to view formatted payload response...</code></pre>
+            </div>
+          </div>
+
+          <div id="res-subtab-headers" class="subtab-pane">
+            <div class="table-container">
+              <table class="kv-table">
+                <thead>
+                  <tr>
+                    <th>Header</th>
+                    <th>Value</th>
+                  </tr>
+                </thead>
+                <tbody id="res-headers-tbody">
+                  <tr><td colspan="2" class="empty-state">No response headers captured yet</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div id="res-subtab-history" class="subtab-pane">
+            <div class="history-list" id="history-list-container">
+              <div class="empty-state">No request history recorded yet.</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 2: Payload Studio & Type Generator -->
+    <section id="tab-payload-studio" class="tab-pane">
+      <div class="workspace-split">
+        <!-- Input Payload Side -->
+        <div class="panel split-side">
+          <div class="panel-header">
+            <h3>Source JSON Payload</h3>
+            <div class="header-tools">
+              <button id="btn-studio-sample" class="btn btn-secondary btn-xs">Sample JSON</button>
+              <button id="btn-studio-format" class="btn btn-secondary btn-xs">Prettify</button>
+              <button id="btn-studio-minify" class="btn btn-secondary btn-xs">Minify</button>
+            </div>
+          </div>
+          <div class="editor-container">
+            <textarea id="studio-json-input" class="code-textarea" placeholder="Paste any raw JSON payload here...">{
+  "id": "usr_99210",
+  "username": "alex_developer",
+  "email": "alex@company.io",
+  "is_active": true,
+  "role": "ADMIN",
+  "account_created": "2024-01-15T08:30:00Z",
+  "metadata": {
+    "login_count": 142,
+    "last_ip": "192.168.1.1",
+    "permissions": ["READ", "WRITE", "EXECUTE"]
+  },
+  "teams": [
+    { "team_id": "t10", "name": "Core Platform" },
+    { "team_id": "t12", "name": "DevOps" }
+  ]
+}</textarea>
+          </div>
+          <div class="status-bar" id="studio-json-status">
+            <span class="status-valid">✓ Valid JSON</span>
+          </div>
+        </div>
+
+        <!-- Output Code/Schema Side -->
+        <div class="panel split-side">
+          <div class="panel-header">
+            <h3>Schema & Code Generator</h3>
+            <div class="format-selector">
+              <label for="select-schema-target">Output Target:</label>
+              <select id="select-schema-target" class="select-sm">
+                <option value="json-schema">JSON Schema (Draft-07)</option>
+                <option value="typescript">TypeScript Interface</option>
+                <option value="zod">Zod Schema (JS/TS)</option>
+                <option value="pydantic">Python Pydantic V2</option>
+                <option value="rust">Rust Structs</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="code-box-container full-height">
+            <pre><code id="studio-schema-output">// Transformed schema output will render here automatically...</code></pre>
+            <button id="btn-copy-schema" class="btn btn-secondary btn-xs btn-copy">Copy Schema</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 3: Data Synthesizer -->
+    <section id="tab-data-synthesizer" class="tab-pane">
+      <div class="workspace-grid">
+        
+        <!-- Synthesizer Controls -->
+        <div class="panel config-panel">
+          <div class="panel-header">
+            <h3>Schema Builder & Presets</h3>
+            <button id="btn-synth-generate" class="btn btn-primary btn-sm">
+              ⚡ Generate Mock Data
+            </button>
+          </div>
+
+          <div class="preset-section">
+            <label>Load Industry Preset:</label>
+            <div class="preset-buttons">
+              <button class="btn btn-secondary btn-xs btn-preset" data-preset="ecommerce">E-Commerce Orders</button>
+              <button class="btn btn-secondary btn-xs btn-preset" data-preset="saas_user">SaaS User Accounts</button>
+              <button class="btn btn-secondary btn-xs btn-preset" data-preset="iot">IoT Sensor Stream</button>
+              <button class="btn btn-secondary btn-xs btn-preset" data-preset="fintech">Financial Ledger</button>
+            </div>
+          </div>
+
+          <div class="config-row">
+            <div class="form-group flex-1">
+              <label for="synth-record-count">Records Count (1-500):</label>
+              <input type="number" id="synth-record-count" min="1" max="500" value="10" class="input-number">
+            </div>
+            <div class="form-group flex-1">
+              <label for="synth-root-wrapper">Wrap Output In:</label>
+              <select id="synth-root-wrapper" class="select-full">
+                <option value="array">JSON Array [ {...} ]</option>
+                <option value="envelope">Paginated Envelope { data: [...] }</option>
+                <option value="ndjson">NDJSON (Line-delimited)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="schema-fields-header">
+            <h4>Field Definitions</h4>
+            <button id="btn-add-synth-field" class="btn btn-secondary btn-xs">+ Add Field</button>
+          </div>
+
+          <div class="synth-fields-list" id="synth-fields-container">
+            <!-- Dynamic field rows populated by JS -->
+          </div>
+        </div>
+
+        <!-- Synthesizer Output -->
+        <div class="panel response-panel">
+          <div class="panel-header">
+            <h3>Generated Synthetic Dataset</h3>
+            <div class="header-tools">
+              <button id="btn-download-synth-json" class="btn btn-secondary btn-xs">Download .json</button>
+              <button id="btn-download-synth-csv" class="btn btn-secondary btn-xs">Export CSV</button>
+              <button id="btn-copy-synth" class="btn btn-secondary btn-xs">Copy</button>
+            </div>
+          </div>
+
+          <div class="code-box-container full-height">
+            <pre><code id="synth-output-preview" class="json-highlight">// Click "Generate Mock Data" to synthesize structured records...</code></pre>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- TAB 4: JWT & Security Inspector -->
+    <section id="tab-jwt-inspector" class="tab-pane">
+      <div class="workspace-grid">
+        
+        <!-- Left: JWT Decoder -->
+        <div class="panel split-side">
+          <div class="panel-header">
+            <h3>JWT Decoder & Expiration Analyzer</h3>
+          </div>
+          <div class="form-group">
+            <label for="jwt-input-token">Encoded JWT Token String:</label>
+            <textarea id="jwt-input-token" class="code-textarea jwt-input" placeholder="Paste eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."></textarea>
+          </div>
+
+          <div class="jwt-status-card" id="jwt-status-card">
+            <span class="badge" id="jwt-valid-badge">Waiting for Token</span>
+            <span class="jwt-time-info" id="jwt-time-info">--</span>
+          </div>
+
+          <div class="jwt-parsed-container">
+            <div class="jwt-block">
+              <h4>Header (Algorithm & Type)</h4>
+              <pre><code id="jwt-header-out" class="json-highlight">{}</code></pre>
+            </div>
+            <div class="jwt-block">
+              <h4>Payload (Claims & User Data)</h4>
+              <pre><code id="jwt-payload-out" class="json-highlight">{}</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Security Headers Auditor -->
+        <div class="panel split-side">
+          <div class="panel-header">
+            <h3>API Security Header Audit Engine</h3>
+          </div>
+          <p class="panel-desc">Paste API response headers (raw text or HTTP headers) to audit key web security directives.</p>
+          
+          <textarea id="security-headers-input" class="code-textarea headers-input" placeholder="Paste response headers here e.g.:&#10;HTTP/1.1 200 OK&#10;Content-Type: application/json&#10;Strict-Transport-Security: max-age=31536000&#10;Access-Control-Allow-Origin: *"></textarea>
+
+          <button id="btn-audit-headers" class="btn btn-primary btn-sm margin-v">Run Security Audit</button>
+
+          <div class="audit-results-list" id="audit-results-container">
+            <div class="audit-item info">
+              <strong>Audit Checklist Ready:</strong> Checks CORS, HSTS, Content-Security-Policy, X-Content-Type-Options, and Cache Directives.
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Quick Import cURL Modal -->
+  <div id="modal-curl" class="modal-backdrop">
+    <div class="modal-card">
       <div class="modal-header">
-        <h3>Select Enterprise Specification Template</h3>
-        <button class="close-modal" id="btn-close-modal">&times;</button>
+        <h3>Import cURL Command</h3>
+        <button id="btn-close-curl-modal" class="btn-icon">&times;</button>
       </div>
       <div class="modal-body">
-        <div class="preset-card active-preset" data-preset="payment">
-          <div class="preset-title">💳 Stripe-like Payment & Billing Microservice v2.1</div>
-          <p class="preset-desc">Includes payment intents, customer records, charge authorizations, refund webhooks, and idempotency headers.</p>
-        </div>
-        <div class="preset-card" data-preset="ecommerce">
-          <div class="preset-title">🛒 E-Commerce Order Fulfillment API v3.0</div>
-          <p class="preset-desc">Includes catalog inventory lookup, cart creation, order processing, and shipment state webhooks.</p>
-        </div>
-        <div class="preset-card" data-preset="healthcare">
-          <div class="preset-title">🏥 FHIR Healthcare Patient Records API v1.0</div>
-          <p class="preset-desc">HL7 / FHIR compliant patient metadata endpoints, clinical observation metrics, and OAuth scopes.</p>
-        </div>
+        <textarea id="curl-import-input" class="code-textarea" placeholder="Paste cURL command here...&#10;curl -X POST https://api.example.com/data -H 'Authorization: Bearer my_token' -H 'Content-Type: application/json' -d '{"name":"item"}'"></textarea>
+      </div>
+      <div class="modal-footer">
+        <button id="btn-cancel-curl" class="btn btn-secondary">Cancel</button>
+        <button id="btn-parse-curl-submit" class="btn btn-primary">Import Request</button>
       </div>
     </div>
   </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="toast-container"></div>
 
   <script src="app.js"></script>
 </body>
