@@ -3,450 +3,450 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PayloadRelay - Local-First API Studio & Payload Synthesizer</title>
+  <title>APIForge Studio — API Design, Stateful Mock Engine & SDK Synthesizer</title>
   <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
+  <div id="app" class="app-container">
+    
+    <!-- Top Header Navigation -->
+    <header class="app-header">
+      <div class="logo-area">
+        <div class="logo-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+        </div>
+        <div class="logo-text">
+          <h1>APIForge <span>Studio</span></h1>
+          <span class="badge">v2.5 Autonomous</span>
+        </div>
+      </div>
 
-  <!-- App Header / Top Navigation -->
-  <header class="app-header">
-    <div class="brand-title">
-      <svg class="brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
-      </svg>
-      <span class="brand-name">Payload<span class="accent-text">Relay</span></span>
-      <span class="badge offline-badge">
-        <span class="dot"></span> Local-Only (100% Private)
-      </span>
-    </div>
+      <div class="header-project-selector">
+        <span class="label">Project:</span>
+        <select id="projectSelect" class="select-input"></select>
+        <button id="btnNewProject" class="btn btn-secondary btn-sm" title="Create New Project">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          New
+        </button>
+      </div>
 
-    <nav class="nav-tabs">
-      <button class="nav-btn active" data-tab="tab-request-builder">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
-        Request Builder
-      </button>
-      <button class="nav-btn" data-tab="tab-payload-studio">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 18l6-6-6-6M8 6l-6 6 6 6"/></svg>
-        Payload Studio
-      </button>
-      <button class="nav-btn" data-tab="tab-data-synthesizer">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21 3.582 4 8 4s8-1.79 8-4"/></svg>
-        Data Synthesizer
-      </button>
-      <button class="nav-btn" data-tab="tab-jwt-inspector">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-        JWT & Security
-      </button>
-    </nav>
+      <div class="header-actions">
+        <div class="mock-engine-status" id="engineStatusBadge" title="Mock Server Dynamic Interceptor Active">
+          <span class="status-dot online"></span>
+          <span class="status-text">Mock Engine Active</span>
+        </div>
+        <button id="btnExportProject" class="btn btn-secondary btn-sm">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Export Backup
+        </button>
+        <button id="btnImportProject" class="btn btn-secondary btn-sm">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          Import
+        </button>
+        <input type="file" id="importFileInput" accept=".json" style="display: none;">
+      </div>
+    </header>
 
-    <div class="header-actions">
-      <button id="btn-quick-curl" class="btn btn-secondary btn-sm">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 17l6-6-6-6M12 19h8"/></svg>
-        Import cURL
-      </button>
-      <button id="btn-clear-history" class="btn btn-secondary btn-sm" title="Clear History Log">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-      </button>
-    </div>
-  </header>
+    <!-- Main Workspace Layout -->
+    <div class="app-body">
+      
+      <!-- Left Sidebar Navigation -->
+      <aside class="sidebar">
+        <nav class="nav-menu">
+          <button class="nav-item active" data-tab="endpoints">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+            <span>Endpoints & Schema</span>
+            <span class="nav-count" id="endpointCount">0</span>
+          </button>
+          <button class="nav-item" data-tab="sandbox">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            <span>API Tester Sandbox</span>
+          </button>
+          <button class="nav-item" data-tab="generator">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+            <span>Data Fuzzer Studio</span>
+          </button>
+          <button class="nav-item" data-tab="sdk">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+            <span>SDK Synthesizer</span>
+          </button>
+          <button class="nav-item" data-tab="openapi">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+            <span>OpenAPI Spec 3.0</span>
+          </button>
+        </nav>
 
-  <!-- Main Application Body -->
-  <main class="app-container">
+        <!-- Dynamic Server Settings Card -->
+        <div class="sidebar-card">
+          <div class="card-header">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+            <span>Mock Controls</span>
+          </div>
+          <div class="control-group">
+            <label for="latencyRange">Simulated Latency: <span id="latencyValue">120ms</span></label>
+            <input type="range" id="latencyRange" min="0" max="2500" step="50" value="120">
+          </div>
+          <div class="control-group">
+            <label for="errorRateRange">Error Simulation: <span id="errorRateValue">0%</span></label>
+            <input type="range" id="errorRateRange" min="0" max="50" step="5" value="0">
+          </div>
+          <div class="control-group checkbox-group">
+            <label class="toggle-switch">
+              <input type="checkbox" id="toggleStatefulDb" checked>
+              <span class="slider"></span>
+            </label>
+            <span>Stateful CRUD Memory</span>
+          </div>
+        </div>
+      </aside>
 
-    <!-- TAB 1: Request Builder -->
-    <section id="tab-request-builder" class="tab-pane active">
-      <div class="workspace-grid">
-        
-        <!-- Left Panel: Request Configuration -->
-        <div class="panel config-panel">
+      <!-- Main Workspace Views Container -->
+      <main class="main-content">
+
+        <!-- TAB 1: ENDPOINTS & SCHEMA DESIGNER -->
+        <section id="tab-endpoints" class="tab-panel active">
           <div class="panel-header">
-            <h3>HTTP Request Setup</h3>
-            <div class="mode-toggle">
-              <label class="toggle-label">
-                <input type="checkbox" id="chk-virtual-mock">
-                <span class="slider"></span>
-                <span class="toggle-text">Virtual Mock Mode</span>
-              </label>
+            <div>
+              <h2>API Routes & Response Schemas</h2>
+              <p class="subtitle">Define REST endpoints, headers, dynamic path params, and templated JSON responses.</p>
+            </div>
+            <button id="btnCreateEndpoint" class="btn btn-primary">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Add Endpoint
+            </button>
+          </div>
+
+          <div class="workspace-grid">
+            <!-- Left: Endpoint List -->
+            <div class="endpoint-list-card">
+              <div class="card-search">
+                <input type="text" id="endpointSearch" placeholder="Filter endpoints by path or method..." class="text-input">
+              </div>
+              <div class="endpoint-items" id="endpointList">
+                <!-- Endpoint Items Rendered Here -->
+              </div>
+            </div>
+
+            <!-- Right: Endpoint Editor Panel -->
+            <div class="endpoint-editor-card" id="endpointEditor">
+              <div class="empty-state" id="editorEmptyState">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                <h3>No Endpoint Selected</h3>
+                <p>Select an endpoint from the left or create a new one to edit contract properties.</p>
+              </div>
+
+              <div class="editor-content hidden" id="editorForm">
+                <div class="editor-header">
+                  <span class="method-tag method-get" id="editorMethodBadge">GET</span>
+                  <input type="text" id="editPath" class="text-input font-mono path-input" placeholder="/api/v1/resource">
+                  <button id="btnSaveEndpoint" class="btn btn-primary btn-sm">Save Route</button>
+                  <button id="btnDeleteEndpoint" class="btn btn-danger btn-sm" title="Delete Endpoint">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                  </button>
+                </div>
+
+                <div class="form-row">
+                  <div class="form-col">
+                    <label>HTTP Method</label>
+                    <select id="editMethod" class="select-input">
+                      <option value="GET">GET</option>
+                      <option value="POST">POST</option>
+                      <option value="PUT">PUT</option>
+                      <option value="PATCH">PATCH</option>
+                      <option value="DELETE">DELETE</option>
+                    </select>
+                  </div>
+                  <div class="form-col">
+                    <label>HTTP Status Response</label>
+                    <select id="editStatus" class="select-input font-mono">
+                      <option value="200">200 OK</option>
+                      <option value="201">201 Created</option>
+                      <option value="204">204 No Content</option>
+                      <option value="400">400 Bad Request</option>
+                      <option value="401">401 Unauthorized</option>
+                      <option value="404">404 Not Found</option>
+                      <option value="500">500 Server Error</option>
+                    </select>
+                  </div>
+                  <div class="form-col">
+                    <label>Group / Category</label>
+                    <input type="text" id="editCategory" class="text-input" placeholder="e.g., Users, Billing">
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label>Endpoint Description</label>
+                  <input type="text" id="editDescription" class="text-input" placeholder="Describes what this route does...">
+                </div>
+
+                <!-- Response Body Template Editor -->
+                <div class="form-group">
+                  <div class="label-with-tags">
+                    <label>Response Body (Templated JSON)</label>
+                    <div class="template-tags">
+                      <span class="tag-pill" title="Insert Dynamic UUID" onclick="insertTemplateTag('{{uuid}}')">{{uuid}}</span>
+                      <span class="tag-pill" title="Insert Full Name" onclick="insertTemplateTag('{{name}}')">{{name}}</span>
+                      <span class="tag-pill" title="Insert Email" onclick="insertTemplateTag('{{email}}')">{{email}}</span>
+                      <span class="tag-pill" title="Insert Date ISO" onclick="insertTemplateTag('{{date}}')">{{date}}</span>
+                      <span class="tag-pill" title="Insert Path Param" onclick="insertTemplateTag('{{req.params.id}}')">{{req.params.id}}</span>
+                    </div>
+                  </div>
+                  <textarea id="editResponseBody" class="code-textarea font-mono" rows="12" placeholder="{\n  &quot;status&quot;: &quot;success&quot;\n}"></textarea>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- TAB 2: API TESTER SANDBOX -->
+        <section id="tab-sandbox" class="tab-panel">
+          <div class="panel-header">
+            <div>
+              <h2>Interactive API Client Sandbox</h2>
+              <p class="subtitle">Execute real requests against your stateful synthetic mock engine or remote APIs.</p>
             </div>
           </div>
 
-          <!-- URL Bar & Method -->
-          <div class="url-bar-container">
-            <select id="req-method" class="select-method">
+          <div class="sandbox-container">
+            <!-- Request Bar -->
+            <div class="request-bar">
+              <select id="sbMethod" class="select-input method-select font-mono">
+                <option value="GET">GET</option>
+                <option value="POST">POST</option>
+                <option value="PUT">PUT</option>
+                <option value="PATCH">PATCH</option>
+                <option value="DELETE">DELETE</option>
+              </select>
+              <input type="text" id="sbUrl" class="text-input font-mono flex-1" placeholder="/api/v1/users">
+              <button id="sbSendBtn" class="btn btn-primary btn-lg">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                Send Request
+              </button>
+            </div>
+
+            <!-- Quick Preset Endpoint Chips -->
+            <div class="preset-chips-container">
+              <span class="chips-label">Quick Execute:</span>
+              <div id="quickRouteChips" class="chips-wrapper">
+                <!-- Dynamic Chips -->
+              </div>
+            </div>
+
+            <div class="sandbox-split">
+              <!-- Left: Request Configuration -->
+              <div class="sandbox-card">
+                <div class="card-tabs">
+                  <button class="sb-tab-btn active" data-sb-tab="headers">Headers</button>
+                  <button class="sb-tab-btn" data-sb-tab="body">Request Body</button>
+                </div>
+
+                <div class="sb-tab-content active" id="sb-tab-headers">
+                  <div class="kv-editor" id="headersKv">
+                    <div class="kv-row">
+                      <input type="text" class="text-input font-mono kv-key" value="Content-Type">
+                      <input type="text" class="text-input font-mono kv-value" value="application/json">
+                      <button class="btn-icon btn-remove-kv">&times;</button>
+                    </div>
+                    <div class="kv-row">
+                      <input type="text" class="text-input font-mono kv-key" value="Authorization">
+                      <input type="text" class="text-input font-mono kv-value" value="Bearer mock-token-88493">
+                      <button class="btn-icon btn-remove-kv">&times;</button>
+                    </div>
+                  </div>
+                  <button id="btnAddHeader" class="btn btn-secondary btn-sm mt-2">+ Add Header</button>
+                </div>
+
+                <div class="sb-tab-content" id="sb-tab-body">
+                  <textarea id="sbRequestBody" class="code-textarea font-mono" rows="10" placeholder="{\n  &quot;name&quot;: &quot;Jane Doe&quot;,\n  &quot;email&quot;: &quot;jane@example.com&quot;\n}"></textarea>
+                </div>
+              </div>
+
+              <!-- Right: Response Output -->
+              <div class="sandbox-card">
+                <div class="response-header-bar">
+                  <span class="title">Response</span>
+                  <div class="response-meta" id="responseMeta" style="display: none;">
+                    <span class="res-status-badge status-2xx" id="resStatus">200 OK</span>
+                    <span class="res-stat font-mono" id="resTime">45 ms</span>
+                    <span class="res-stat font-mono" id="resSize">1.2 KB</span>
+                  </div>
+                </div>
+
+                <div class="response-body-wrapper">
+                  <pre id="responseBodyDisplay" class="font-mono response-display">Click "Send Request" to test endpoint response...</pre>
+                </div>
+              </div>
+            </div>
+
+            <!-- Execution Logs Bar -->
+            <div class="sandbox-logs-card">
+              <div class="logs-header">
+                <h3>Live Execution Log</h3>
+                <button id="btnClearLogs" class="btn btn-text btn-sm">Clear</button>
+              </div>
+              <div class="logs-console font-mono" id="sandboxLogsConsole">
+                <div class="log-entry info">[System] Ready to test API endpoints locally.</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- TAB 3: DATA FUZZER STUDIO -->
+        <section id="tab-generator" class="tab-panel">
+          <div class="panel-header">
+            <div>
+              <h2>Synthetic Data Fuzzer</h2>
+              <p class="subtitle">Generate realistic datasets in bulk using flexible domain-specific templates.</p>
+            </div>
+          </div>
+
+          <div class="fuzzer-container">
+            <div class="fuzzer-controls-card">
+              <div class="form-row">
+                <div class="form-col">
+                  <label>Preset Schema</label>
+                  <select id="fuzzPreset" class="select-input">
+                    <option value="users">SaaS User Directory</option>
+                    <option value="ecommerce">E-Commerce Products & Orders</option>
+                    <option value="finance">Financial Transactions</option>
+                    <option value="iot">IoT Device Telemetry</option>
+                    <option value="custom">Custom Template AST</option>
+                  </select>
+                </div>
+                <div class="form-col">
+                  <label>Record Count</label>
+                  <input type="number" id="fuzzCount" class="text-input font-mono" value="10" min="1" max="1000">
+                </div>
+                <div class="form-col">
+                  <label>Export Format</label>
+                  <select id="fuzzFormat" class="select-input">
+                    <option value="json">JSON Array</option>
+                    <option value="csv">CSV (Comma Separated)</option>
+                    <option value="sql">SQL Insert Statements</option>
+                  </select>
+                </div>
+                <div class="form-col btn-align-bottom">
+                  <button id="btnGenerateFuzz" class="btn btn-primary w-full">Generate Dataset</button>
+                </div>
+              </div>
+
+              <div class="form-group mt-3" id="customFuzzTemplateGroup" style="display:none;">
+                <label>Custom Record JSON Template</label>
+                <textarea id="customFuzzTemplate" class="code-textarea font-mono" rows="4">{\n  "id": "{{uuid}}",\n  "title": "{{name}}",\n  "created_at": "{{date}}"\n}</textarea>
+              </div>
+            </div>
+
+            <div class="fuzzer-output-card">
+              <div class="output-header">
+                <span class="title">Generated Synthetic Output</span>
+                <div class="actions">
+                  <button id="btnCopyFuzz" class="btn btn-secondary btn-sm">Copy Code</button>
+                  <button id="btnDownloadFuzz" class="btn btn-secondary btn-sm">Download File</button>
+                </div>
+              </div>
+              <textarea id="fuzzOutputText" class="code-textarea font-mono readonly-editor" readonly placeholder="Click Generate Dataset to preview mock data..."></textarea>
+            </div>
+          </div>
+        </section>
+
+        <!-- TAB 4: SDK SYNTHESIZER -->
+        <section id="tab-sdk" class="tab-panel">
+          <div class="panel-header">
+            <div>
+              <h2>SDK Synthesizer</h2>
+              <p class="subtitle">Auto-generate fully typed, production-ready client libraries for your configured project.</p>
+            </div>
+          </div>
+
+          <div class="sdk-container">
+            <div class="sdk-lang-selector">
+              <button class="sdk-lang-btn active" data-lang="typescript">TypeScript (Fetch)</button>
+              <button class="sdk-lang-btn" data-lang="javascript">JavaScript (Axios)</button>
+              <button class="sdk-lang-btn" data-lang="python">Python (Requests)</button>
+              <button class="sdk-lang-btn" data-lang="go">Go Client</button>
+              <button class="sdk-lang-btn" data-lang="curl">cURL Shell Script</button>
+            </div>
+
+            <div class="sdk-code-card">
+              <div class="code-card-header">
+                <span id="sdkLangTitle" class="title">TypeScript SDK</span>
+                <button id="btnCopySdk" class="btn btn-secondary btn-sm">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                  Copy SDK Code
+                </button>
+              </div>
+              <pre id="sdkCodeDisplay" class="font-mono sdk-code-display">// Select a target programming language to synthesize SDK code...</pre>
+            </div>
+          </div>
+        </section>
+
+        <!-- TAB 5: OPENAPI SPEC EXPORT -->
+        <section id="tab-openapi" class="tab-panel">
+          <div class="panel-header">
+            <div>
+              <h2>OpenAPI 3.0 Specification Synthesizer</h2>
+              <p class="subtitle">Standardized API documentation contract ready for Swagger, Postman, or Gateway imports.</p>
+            </div>
+            <div>
+              <button id="btnCopyOpenApi" class="btn btn-secondary btn-sm">Copy Spec</button>
+              <button id="btnDownloadOpenApi" class="btn btn-primary btn-sm">Download openapi.json</button>
+            </div>
+          </div>
+
+          <div class="openapi-container">
+            <textarea id="openApiSpecDisplay" class="code-textarea font-mono readonly-editor" readonly></textarea>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- Modal for Creating New Endpoint -->
+  <div id="modalNewEndpoint" class="modal-overlay">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>Add New Route Endpoint</h3>
+        <button class="modal-close" onclick="closeModal('modalNewEndpoint')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-row">
+          <div class="form-col">
+            <label>HTTP Method</label>
+            <select id="newMethod" class="select-input">
               <option value="GET">GET</option>
-              <option value="POST" selected>POST</option>
+              <option value="POST">POST</option>
               <option value="PUT">PUT</option>
               <option value="PATCH">PATCH</option>
               <option value="DELETE">DELETE</option>
-              <option value="OPTIONS">OPTIONS</option>
             </select>
-            <input type="text" id="req-url" class="input-url" placeholder="https://api.example.com/v1/resource or /mock/user" value="https://jsonplaceholder.typicode.com/posts">
-            <button id="btn-send-request" class="btn btn-primary">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-              Send
-            </button>
           </div>
-
-          <!-- Sub Tabs: Headers, Auth, Body -->
-          <div class="subtabs-bar">
-            <button class="subtab-btn active" data-subtab="req-subtab-headers">Headers (<span id="count-headers">2</span>)</button>
-            <button class="subtab-btn" data-subtab="req-subtab-auth">Auth</button>
-            <button class="subtab-btn" data-subtab="req-subtab-body">Body (JSON)</button>
-            <button class="subtab-btn" data-subtab="req-subtab-mock-settings">Mock Latency</button>
-          </div>
-
-          <!-- Subtab Content: Headers -->
-          <div id="req-subtab-headers" class="subtab-pane active">
-            <div class="table-container">
-              <table class="kv-table" id="headers-table">
-                <thead>
-                  <tr>
-                    <th style="width: 30px;"></th>
-                    <th>Header Key</th>
-                    <th>Header Value</th>
-                    <th style="width: 40px;"></th>
-                  </tr>
-                </thead>
-                <tbody id="headers-tbody">
-                  <tr>
-                    <td><input type="checkbox" checked class="kv-check"></td>
-                    <td><input type="text" class="input-cell kv-key" value="Content-Type"></td>
-                    <td><input type="text" class="input-cell kv-val" value="application/json"></td>
-                    <td><button class="btn-icon btn-remove-row">&times;</button></td>
-                  </tr>
-                  <tr>
-                    <td><input type="checkbox" checked class="kv-check"></td>
-                    <td><input type="text" class="input-cell kv-key" value="Accept"></td>
-                    <td><input type="text" class="input-cell kv-val" value="application/json"></td>
-                    <td><button class="btn-icon btn-remove-row">&times;</button></td>
-                  </tr>
-                </tbody>
-              </table>
-              <button id="btn-add-header" class="btn btn-secondary btn-xs">+ Add Header</button>
-            </div>
-          </div>
-
-          <!-- Subtab Content: Auth -->
-          <div id="req-subtab-auth" class="subtab-pane">
-            <div class="form-group">
-              <label>Authentication Type</label>
-              <select id="auth-type" class="select-full">
-                <option value="none">No Auth</option>
-                <option value="bearer">Bearer Token</option>
-                <option value="basic">Basic Auth</option>
-                <option value="apikey">API Key Header</option>
-              </select>
-            </div>
-            <div id="auth-fields" class="auth-fields-container">
-              <!-- Dynamically populated -->
-            </div>
-          </div>
-
-          <!-- Subtab Content: Body -->
-          <div id="req-subtab-body" class="subtab-pane">
-            <div class="editor-toolbar">
-              <button id="btn-format-req-body" class="btn btn-secondary btn-xs">Format JSON</button>
-              <button id="btn-sample-req-body" class="btn btn-secondary btn-xs">Load Sample Payload</button>
-            </div>
-            <textarea id="req-body-input" class="code-textarea" placeholder="Enter JSON payload...">{
-  "title": "PayloadRelay Test Request",
-  "body": "Testing local virtual execution & schema analysis.",
-  "userId": 42
-}</textarea>
-          </div>
-
-          <!-- Subtab Content: Mock Settings -->
-          <div id="req-subtab-mock-settings" class="subtab-pane">
-            <div class="form-group">
-              <label>Simulated Latency (ms): <span id="lbl-latency">150</span>ms</label>
-              <input type="range" id="input-latency" min="0" max="3000" step="50" value="150">
-            </div>
-            <div class="form-group">
-              <label>Simulated Status Code</label>
-              <select id="mock-status-code" class="select-full">
-                <option value="200">200 OK</option>
-                <option value="201">201 Created</option>
-                <option value="400">400 Bad Request</option>
-                <option value="401">401 Unauthorized</option>
-                <option value="404">404 Not Found</option>
-                <option value="500">500 Internal Server Error</option>
-              </select>
-            </div>
-          </div>
-
-          <!-- Code Snippet Generator section -->
-          <div class="panel-section code-export-section">
-            <div class="section-title">
-              <span>Client Code Generator</span>
-              <select id="select-export-lang" class="select-sm">
-                <option value="fetch">JS (Fetch API)</option>
-                <option value="python">Python (requests)</option>
-                <option value="curl">cURL Command</option>
-                <option value="go">Go (net/http)</option>
-              </select>
-            </div>
-            <div class="code-box-container">
-              <pre><code id="code-export-preview">// Code snippet will be generated here</code></pre>
-              <button id="btn-copy-code" class="btn btn-secondary btn-xs btn-copy">Copy Code</button>
-            </div>
-          </div>
-
-        </div>
-
-        <!-- Right Panel: Response Viewer & History -->
-        <div class="panel response-panel">
-          <div class="panel-header">
-            <h3>Response Inspector</h3>
-            <div class="response-metrics" id="response-metrics">
-              <span class="metric-badge status-neutral" id="res-status-badge">Status: ---</span>
-              <span class="metric-badge" id="res-time-badge">Time: 0ms</span>
-              <span class="metric-badge" id="res-size-badge">Size: 0 B</span>
-            </div>
-          </div>
-
-          <div class="subtabs-bar">
-            <button class="subtab-btn active" data-subtab="res-subtab-body">Response Body</button>
-            <button class="subtab-btn" data-subtab="res-subtab-headers">Headers (<span id="res-headers-count">0</span>)</button>
-            <button class="subtab-btn" data-subtab="res-subtab-history">History Log</button>
-          </div>
-
-          <div id="res-subtab-body" class="subtab-pane active flex-pane">
-            <div class="response-toolbar">
-              <input type="text" id="res-filter-key" class="input-sm" placeholder="Search JSON response...">
-              <button id="btn-copy-response" class="btn btn-secondary btn-xs">Copy JSON</button>
-            </div>
-            <div class="code-box-container full-height">
-              <pre><code id="res-body-preview" class="json-highlight">// Send a request to view formatted payload response...</code></pre>
-            </div>
-          </div>
-
-          <div id="res-subtab-headers" class="subtab-pane">
-            <div class="table-container">
-              <table class="kv-table">
-                <thead>
-                  <tr>
-                    <th>Header</th>
-                    <th>Value</th>
-                  </tr>
-                </thead>
-                <tbody id="res-headers-tbody">
-                  <tr><td colspan="2" class="empty-state">No response headers captured yet</td></tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          <div id="res-subtab-history" class="subtab-pane">
-            <div class="history-list" id="history-list-container">
-              <div class="empty-state">No request history recorded yet.</div>
-            </div>
-          </div>
-
-        </div>
-      </div>
-    </section>
-
-    <!-- TAB 2: Payload Studio & Type Generator -->
-    <section id="tab-payload-studio" class="tab-pane">
-      <div class="workspace-split">
-        <!-- Input Payload Side -->
-        <div class="panel split-side">
-          <div class="panel-header">
-            <h3>Source JSON Payload</h3>
-            <div class="header-tools">
-              <button id="btn-studio-sample" class="btn btn-secondary btn-xs">Sample JSON</button>
-              <button id="btn-studio-format" class="btn btn-secondary btn-xs">Prettify</button>
-              <button id="btn-studio-minify" class="btn btn-secondary btn-xs">Minify</button>
-            </div>
-          </div>
-          <div class="editor-container">
-            <textarea id="studio-json-input" class="code-textarea" placeholder="Paste any raw JSON payload here...">{
-  "id": "usr_99210",
-  "username": "alex_developer",
-  "email": "alex@company.io",
-  "is_active": true,
-  "role": "ADMIN",
-  "account_created": "2024-01-15T08:30:00Z",
-  "metadata": {
-    "login_count": 142,
-    "last_ip": "192.168.1.1",
-    "permissions": ["READ", "WRITE", "EXECUTE"]
-  },
-  "teams": [
-    { "team_id": "t10", "name": "Core Platform" },
-    { "team_id": "t12", "name": "DevOps" }
-  ]
-}</textarea>
-          </div>
-          <div class="status-bar" id="studio-json-status">
-            <span class="status-valid">✓ Valid JSON</span>
+          <div class="form-col flex-2">
+            <label>Path Pattern</label>
+            <input type="text" id="newPath" class="text-input font-mono" placeholder="/api/v1/orders/:id">
           </div>
         </div>
-
-        <!-- Output Code/Schema Side -->
-        <div class="panel split-side">
-          <div class="panel-header">
-            <h3>Schema & Code Generator</h3>
-            <div class="format-selector">
-              <label for="select-schema-target">Output Target:</label>
-              <select id="select-schema-target" class="select-sm">
-                <option value="json-schema">JSON Schema (Draft-07)</option>
-                <option value="typescript">TypeScript Interface</option>
-                <option value="zod">Zod Schema (JS/TS)</option>
-                <option value="pydantic">Python Pydantic V2</option>
-                <option value="rust">Rust Structs</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="code-box-container full-height">
-            <pre><code id="studio-schema-output">// Transformed schema output will render here automatically...</code></pre>
-            <button id="btn-copy-schema" class="btn btn-secondary btn-xs btn-copy">Copy Schema</button>
-          </div>
+        <div class="form-group mt-2">
+          <label>Category Tag</label>
+          <input type="text" id="newCategory" class="text-input" placeholder="e.g. Orders">
         </div>
-      </div>
-    </section>
-
-    <!-- TAB 3: Data Synthesizer -->
-    <section id="tab-data-synthesizer" class="tab-pane">
-      <div class="workspace-grid">
-        
-        <!-- Synthesizer Controls -->
-        <div class="panel config-panel">
-          <div class="panel-header">
-            <h3>Schema Builder & Presets</h3>
-            <button id="btn-synth-generate" class="btn btn-primary btn-sm">
-              ⚡ Generate Mock Data
-            </button>
-          </div>
-
-          <div class="preset-section">
-            <label>Load Industry Preset:</label>
-            <div class="preset-buttons">
-              <button class="btn btn-secondary btn-xs btn-preset" data-preset="ecommerce">E-Commerce Orders</button>
-              <button class="btn btn-secondary btn-xs btn-preset" data-preset="saas_user">SaaS User Accounts</button>
-              <button class="btn btn-secondary btn-xs btn-preset" data-preset="iot">IoT Sensor Stream</button>
-              <button class="btn btn-secondary btn-xs btn-preset" data-preset="fintech">Financial Ledger</button>
-            </div>
-          </div>
-
-          <div class="config-row">
-            <div class="form-group flex-1">
-              <label for="synth-record-count">Records Count (1-500):</label>
-              <input type="number" id="synth-record-count" min="1" max="500" value="10" class="input-number">
-            </div>
-            <div class="form-group flex-1">
-              <label for="synth-root-wrapper">Wrap Output In:</label>
-              <select id="synth-root-wrapper" class="select-full">
-                <option value="array">JSON Array [ {...} ]</option>
-                <option value="envelope">Paginated Envelope { data: [...] }</option>
-                <option value="ndjson">NDJSON (Line-delimited)</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="schema-fields-header">
-            <h4>Field Definitions</h4>
-            <button id="btn-add-synth-field" class="btn btn-secondary btn-xs">+ Add Field</button>
-          </div>
-
-          <div class="synth-fields-list" id="synth-fields-container">
-            <!-- Dynamic field rows populated by JS -->
-          </div>
+        <div class="form-group mt-2">
+          <label>Description</label>
+          <input type="text" id="newDescription" class="text-input" placeholder="Short description of the endpoint">
         </div>
-
-        <!-- Synthesizer Output -->
-        <div class="panel response-panel">
-          <div class="panel-header">
-            <h3>Generated Synthetic Dataset</h3>
-            <div class="header-tools">
-              <button id="btn-download-synth-json" class="btn btn-secondary btn-xs">Download .json</button>
-              <button id="btn-download-synth-csv" class="btn btn-secondary btn-xs">Export CSV</button>
-              <button id="btn-copy-synth" class="btn btn-secondary btn-xs">Copy</button>
-            </div>
-          </div>
-
-          <div class="code-box-container full-height">
-            <pre><code id="synth-output-preview" class="json-highlight">// Click "Generate Mock Data" to synthesize structured records...</code></pre>
-          </div>
-        </div>
-
-      </div>
-    </section>
-
-    <!-- TAB 4: JWT & Security Inspector -->
-    <section id="tab-jwt-inspector" class="tab-pane">
-      <div class="workspace-grid">
-        
-        <!-- Left: JWT Decoder -->
-        <div class="panel split-side">
-          <div class="panel-header">
-            <h3>JWT Decoder & Expiration Analyzer</h3>
-          </div>
-          <div class="form-group">
-            <label for="jwt-input-token">Encoded JWT Token String:</label>
-            <textarea id="jwt-input-token" class="code-textarea jwt-input" placeholder="Paste eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."></textarea>
-          </div>
-
-          <div class="jwt-status-card" id="jwt-status-card">
-            <span class="badge" id="jwt-valid-badge">Waiting for Token</span>
-            <span class="jwt-time-info" id="jwt-time-info">--</span>
-          </div>
-
-          <div class="jwt-parsed-container">
-            <div class="jwt-block">
-              <h4>Header (Algorithm & Type)</h4>
-              <pre><code id="jwt-header-out" class="json-highlight">{}</code></pre>
-            </div>
-            <div class="jwt-block">
-              <h4>Payload (Claims & User Data)</h4>
-              <pre><code id="jwt-payload-out" class="json-highlight">{}</code></pre>
-            </div>
-          </div>
-        </div>
-
-        <!-- Right: Security Headers Auditor -->
-        <div class="panel split-side">
-          <div class="panel-header">
-            <h3>API Security Header Audit Engine</h3>
-          </div>
-          <p class="panel-desc">Paste API response headers (raw text or HTTP headers) to audit key web security directives.</p>
-          
-          <textarea id="security-headers-input" class="code-textarea headers-input" placeholder="Paste response headers here e.g.:&#10;HTTP/1.1 200 OK&#10;Content-Type: application/json&#10;Strict-Transport-Security: max-age=31536000&#10;Access-Control-Allow-Origin: *"></textarea>
-
-          <button id="btn-audit-headers" class="btn btn-primary btn-sm margin-v">Run Security Audit</button>
-
-          <div class="audit-results-list" id="audit-results-container">
-            <div class="audit-item info">
-              <strong>Audit Checklist Ready:</strong> Checks CORS, HSTS, Content-Security-Policy, X-Content-Type-Options, and Cache Directives.
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </section>
-
-  </main>
-
-  <!-- Quick Import cURL Modal -->
-  <div id="modal-curl" class="modal-backdrop">
-    <div class="modal-card">
-      <div class="modal-header">
-        <h3>Import cURL Command</h3>
-        <button id="btn-close-curl-modal" class="btn-icon">&times;</button>
-      </div>
-      <div class="modal-body">
-        <textarea id="curl-import-input" class="code-textarea" placeholder="Paste cURL command here...&#10;curl -X POST https://api.example.com/data -H 'Authorization: Bearer my_token' -H 'Content-Type: application/json' -d '{"name":"item"}'"></textarea>
       </div>
       <div class="modal-footer">
-        <button id="btn-cancel-curl" class="btn btn-secondary">Cancel</button>
-        <button id="btn-parse-curl-submit" class="btn btn-primary">Import Request</button>
+        <button class="btn btn-secondary" onclick="closeModal('modalNewEndpoint')">Cancel</button>
+        <button id="btnConfirmCreateEndpoint" class="btn btn-primary">Create Route</button>
       </div>
     </div>
   </div>
 
   <!-- Toast Notification Container -->
-  <div id="toast-container" class="toast-container"></div>
+  <div id="toastContainer" class="toast-container"></div>
 
   <script src="app.js"></script>
 </body>

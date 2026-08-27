@@ -1,129 +1,73 @@
-# PayloadRelay - Local-First API & Webhook Studio
+# APIForge Studio — Autonomous Micro-SaaS API Designer, Stateful Mock Engine & SDK Synthesizer
 
-> **Zero-Telemetry, Offline-First API Sandbox, Webhook Inspector, JSON Schema Engine & Synthetic Payload Synthesizer.**
+> **Problem Solved:** Frontend developers, mobile engineers, and product managers often face severe productivity bottlenecks waiting for backend APIs to be designed, deployed, or stabilized. Existing solutions either require complex backend setups, paid cloud services, or produce static mock data without state persistence or client SDK generation.
 
-![PayloadRelay Interface](https://img.shields.io/badge/Security-100%25%20Local%20%26%20Zero--Telemetry-emerald?style=for-the-badge)
-![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)
-
----
-
-## 💡 The Problem
-
-Modern software teams face significant friction and privacy risks when developing, testing, and debugging APIs:
-1. **Data Leakage & Privacy Violations**: Popular online tools like Postman, Webhook.site, and JSON formatters transmit authorization tokens, PII, production secrets, and customer data to third-party cloud servers.
-2. **Context Switching & Tool Fragmentation**: Developers juggle separate tools for sending requests, converting JSON to TypeScript/Zod types, decoding JWTs, generating mock datasets, and inspecting headers.
-3. **Flaky Mocking Environments**: Backend endpoints under development are often incomplete or unreliable, blocking frontend development and end-to-end automated testing.
-4. **Payload Validation Overhead**: Manually creating JSON Schemas or Pydantic/Zod validation models from raw API payloads is tedious and prone to human error.
+**APIForge Studio** is a browser-native, zero-dependency workspace that enables developers to design RESTful API contracts, run stateful synthetic mock servers with low-latency dynamic dynamic routing directly in browser memory, fuzz dynamic test data, and synthesize client SDKs (TypeScript, Python, Go, JavaScript, Curl) alongside valid OpenAPI 3.0 specs in real-time.
 
 ---
 
-## 🚀 The Solution: PayloadRelay
+## 🌟 Key Features
 
-**PayloadRelay** is an all-in-one, 100% client-side web application designed for high-velocity software engineering. It operates entirely in the browser with **zero external server dependencies, zero telemetry, and complete offline availability**.
+1. **Visual Endpoint & Schema Designer**:
+   - Support for `GET`, `POST`, `PUT`, `PATCH`, and `DELETE` methods.
+   - Dynamic route params (e.g. `/api/v1/users/:id`).
+   - Smart dynamic templates (`{{uuid}}`, `{{name}}`, `{{email}}`, `{{company}}`, `{{date}}`, `{{price}}`, `{{req.params.id}}`).
 
-### Core Capabilities
+2. **Stateful In-Browser Mock Engine**:
+   - Persistent virtual database backed by LocalStorage & IndexedDB semantics.
+   - Instant CRUD logic automatically executed for endpoints (`POST` creates items, `PUT` updates, `DELETE` removes, `GET` reads).
+   - Configurable latency simulation (0ms to 3000ms) and random error injection (0% to 50% fault rate).
 
-- 📡 **API Request Builder & Virtual Network Interceptor**:
-  - Dispatch real HTTP requests (`fetch`) or simulate mock local responses with custom latency and status codes.
-  - Auto-parse cURL commands into structured requests.
-  - Export code snippets instantly to `JavaScript fetch`, `Python requests`, `cURL`, and `Go net/http`.
+3. **Multi-Language SDK & Client Synthesizer**:
+   - Instant code generation for:
+     - **TypeScript** (Strongly typed Async Client with interfaces)
+     - **JavaScript** (Fetch & Axios variants)
+     - **Python** (`requests` & `httpx` with `dataclasses`)
+     - **Go** (`net/http` client structs)
+     - **cURL** command line calls
+   - Full **OpenAPI 3.0 Spec Synthesizer** (JSON export).
 
-- ⚡ **Payload Studio & Multi-Format Schema Synthesizer**:
-  - Paste raw JSON and instantly infer standard **JSON Schema (Draft-07)**.
-  - Auto-generate strongly typed schemas: **TypeScript Interfaces**, **Zod Validation Schemas**, **Python Pydantic Models**, and **Rust Structs**.
-  - Built-in strict JSON syntax validation, formatting, and minify engine.
+4. **Synthetic Data Fuzzer & Generator**:
+   - Pre-built dataset templates: E-Commerce, SaaS User Directory, Financial Ledger, IoT Sensor Metrics, Task Tracker.
+   - Export synthetic data sets in JSON, CSV, and SQL `INSERT` formats.
 
-- 🎲 **Synthetic Data Generator Engine**:
-  - Synthesize up to 500 structured mock JSON or CSV records on demand.
-  - Pre-built industry templates: *E-Commerce Orders*, *SaaS User Profiles*, *Financial Transactions*, *IoT Sensor Streams*, and *API Security Logs*.
-  - Flexible schema builder: UUIDv4, ISO Timestamps, Emails, Names, Currency, Coordinates, Custom Enums, and Numerical Ranges.
+5. **Interactive API Sandbox & Request Inspector**:
+   - Native HTTP runner for both internal dynamic dynamic dynamic mock routes and real external CORS-enabled APIs.
+   - Request history, execution latency charts, HTTP response status indicators, and headers viewer.
 
-- 🔑 **JWT & Security Header Inspector**:
-  - Decode and inspect JWT Headers, Payloads, and Expiration claims locally.
-  - Calculate claim expiration status (`exp`, `iat`, `nbf`) with real-time countdowns.
-  - Evaluate response security headers against modern web defense standards (CORS, CSP, HSTS, X-Content-Type-Options).
-
-- 💾 **IndexedDB Local Storage**:
-  - High-performance local persistence for request history, custom schemas, and saved environment collections.
-  - Quick search, filtering, tags, and one-click JSON collection import/export.
+6. **Zero-Touch Local Workspace Engine**:
+   - 100% Client-Side. No login required, zero server deployments, local JSON import/export project workspace.
 
 ---
 
-## 🏗 Architecture & Tech Stack
-
-PayloadRelay is built with standard Web API standards for maximum compatibility and performance:
+## 🛠 Project Architecture
 
 ```
-+-----------------------------------------------------------------------+
-|                       Browser Client Layer                           |
-|                                                                       |
-|  +---------------------+  +--------------------+  +----------------+  |
-|  | Request Builder     |  | Payload Studio     |  | Synthetic      |  |
-|  | & cURL Converter    |  | & Schema Engine    |  | Data Generator |  |
-|  +----------+----------+  +---------+----------+  +-------+--------+  |
-|             |                       |                     |           |
-|  +----------v-----------------------v---------------------v--------+  |
-|  |                     PayloadRelay Core Engine                    |  |
-|  |  - Virtual HTTP Dispatcher     - Code Generator (TS/Zod/Py/Rust)  |  |
-|  |  - JWT Decoder Engine          - Rule-Based Mock Synthesizer      |  |
-|  +----------------------------------+------------------------------+  |
-|                                     |                                 |
-|  +----------------------------------v------------------------------+  |
-|  |               Persistence Layer (IndexedDB / WebStorage)        |  |
-|  +-----------------------------------------------------------------+  |
-+-----------------------------------------------------------------------+
+APIForge Studio
+├── index.html        # Single Page Application structure with tabbed workspace UI
+├── style.css         # Production CSS design system (Dark mode studio theme, responsive design)
+└── app.js            # Core App Engine:
+                      #   ├── Data Generator / Templating Engine
+                      #   ├── Stateful Mock DB & Route Resolver
+                      #   ├── HTTP Request Sandbox Execution Core
+                      #   ├── SDK Code Synthesizers (TS, Python, Go, Curl)
+                      #   └── Project Import/Export Manager
 ```
 
-- **Frontend**: HTML5, Modern Modular CSS (Variables, Flexbox, CSS Grid), Vanilla JavaScript (ES2023+).
-- **Storage Engine**: Browser `IndexedDB` API with `localStorage` fallback.
-- **Dependencies**: **Zero** external libraries, zero CDN calls, zero node_modules required for execution.
+---
+
+## 🚀 Getting Started
+
+1. Open `index.html` in any modern web browser.
+2. Explore the pre-loaded **PulseMetrics SaaS API** or create your own custom endpoints.
+3. Switch to the **API Tester Sandbox** to execute mock requests with real state persistence.
+4. Open **SDK Synthesizer** to generate ready-to-use client libraries for your project.
+5. Export your OpenAPI 3.0 specification or backup your workspace JSON at any time.
 
 ---
 
-## 🛠 Quick Start
-
-1. Download or clone this repository.
-2. Open `index.html` in any modern web browser (Chrome, Firefox, Safari, Edge, Brave).
-3. No build step, node runtime, or server required!
-
-### Offline PWA Installation
-Double click `index.html` or host via any static web server (e.g., `python -m http.server 8000` or GitHub Pages).
-
----
-
-## 📖 Usage Guide
-
-### 1. Request Builder & cURL Import
-- Paste a cURL command into the input modal or click **Import cURL**.
-- Modify headers, auth bearer tokens, or query parameters.
-- Toggle between **Real HTTP** execution or **Virtual Mock Response** mode to test offline user experiences.
-
-### 2. Payload Studio (Type & Schema Generation)
-- Navigate to the **Payload Studio** tab.
-- Paste any JSON object or array into the source input.
-- Click **Infer Schema** to view generated **JSON Schema**, **TypeScript**, **Zod**, **Python Pydantic**, or **Rust Structs**.
-- Download or copy the code directly into your code repository.
-
-### 3. Synthetic Data Synthesizer
-- Navigate to **Data Synthesizer**.
-- Select a preset (e.g., *E-Commerce Orders*) or add custom field definitions.
-- Set the desired record count (e.g., `50`).
-- Click **Generate Synthetic Data** and export as `.json` or `.csv`.
-
-### 4. JWT & Security Analysis
-- Navigate to **JWT & Header Inspector**.
-- Paste an encoded JWT string to view decoded header JSON, payload claims, and token expiration analysis.
-- Inspect incoming HTTP headers for standard security practices.
-
----
-
-## 🔒 Security & Privacy Guarantee
-
-- **Zero Network Transmission**: PayloadRelay does NOT send telemetry, logs, or analytics to any backend server.
-- **Local Key Storage**: API tokens and JWTs remain isolated inside your browser's local sandbox environment.
-- **Compliance Ready**: Suitable for enterprise environments bound by HIPAA, GDPR, SOC2, and strict data privacy regulations.
-
----
-
-## 📄 License
-Released under the [MIT License](LICENSE).
+## 💻 Tech Stack
+- **Frontend Core:** Standard HTML5, CSS Variables, Native JavaScript ES6+
+- **Icons:** Embedded Inline SVG System (Lucide style)
+- **Data Engine:** Web Storage API, Synthetic AST Evaluator
+- **Dependencies:** None (0 external CDN scripts, pure standalone application)
