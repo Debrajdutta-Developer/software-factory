@@ -3,450 +3,385 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>APIForge Studio — API Design, Stateful Mock Engine & SDK Synthesizer</title>
+  <title>CloudCraft Studio - Architecture, Security & IaC Engine</title>
   <link rel="stylesheet" href="style.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-  <div id="app" class="app-container">
-    
-    <!-- Top Header Navigation -->
-    <header class="app-header">
-      <div class="logo-area">
+  <div id="app-container">
+    <!-- TOP NAVIGATION BAR -->
+    <header id="navbar">
+      <div class="logo-group">
         <div class="logo-icon">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M17.5 19 9 19C5.13 19 2 15.87 2 12C2 8.35 4.8 5.34 8.4 5.04C9.7 2.62 12.2 1 15 1C18.87 1 22 4.13 22 8C22 8.5 21.9 9 21.7 9.5C22.5 10.3 23 11.4 23 12.5C23 14.98 20.98 17 18.5 17"></path>
+            <polyline points="12 12 16 16 20 12"></polyline>
+            <line x1="16" y1="16" x2="16" y2="22"></line>
+          </svg>
         </div>
         <div class="logo-text">
-          <h1>APIForge <span>Studio</span></h1>
-          <span class="badge">v2.5 Autonomous</span>
+          <h1>CloudCraft <span>Studio</span></h1>
+          <span class="badge-tag">v2.5 Pro</span>
         </div>
       </div>
 
-      <div class="header-project-selector">
-        <span class="label">Project:</span>
-        <select id="projectSelect" class="select-input"></select>
-        <button id="btnNewProject" class="btn btn-secondary btn-sm" title="Create New Project">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-          New
-        </button>
-      </div>
-
-      <div class="header-actions">
-        <div class="mock-engine-status" id="engineStatusBadge" title="Mock Server Dynamic Interceptor Active">
-          <span class="status-dot online"></span>
-          <span class="status-text">Mock Engine Active</span>
+      <div class="header-controls">
+        <div class="template-selector-group">
+          <label for="templateSelect">Architecture Preset:</label>
+          <select id="templateSelect">
+            <option value="blank">Custom Blank Canvas</option>
+            <option value="three-tier" selected>3-Tier HA Web App</option>
+            <option value="serverless">Event-Driven Serverless</option>
+            <option value="kubernetes">Enterprise Kubernetes Mesh</option>
+            <option value="datalake">Big Data Lake Pipeline</option>
+          </select>
         </div>
-        <button id="btnExportProject" class="btn btn-secondary btn-sm">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          Export Backup
+
+        <div class="metric-pill cost-pill">
+          <span class="label">Est. Cost:</span>
+          <span id="headerCostValue" class="value">$0.00/mo</span>
+        </div>
+
+        <div class="metric-pill security-pill" id="securityPill">
+          <span class="label">Security Score:</span>
+          <span id="headerSecurityScore" class="value">100%</span>
+        </div>
+
+        <button id="btnExportTf" class="btn btn-primary">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="12" y1="18" x2="12" y2="12"></line><line x1="9" y1="15" x2="15" y2="15"></line></svg>
+          Export IaC (Terraform)
         </button>
-        <button id="btnImportProject" class="btn btn-secondary btn-sm">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-          Import
+
+        <button id="btnExportJson" class="btn btn-secondary" title="Export Architecture JSON">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
         </button>
-        <input type="file" id="importFileInput" accept=".json" style="display: none;">
+
+        <button id="btnClearCanvas" class="btn btn-danger" title="Clear Canvas">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+        </button>
       </div>
     </header>
 
-    <!-- Main Workspace Layout -->
-    <div class="app-body">
-      
-      <!-- Left Sidebar Navigation -->
-      <aside class="sidebar">
-        <nav class="nav-menu">
-          <button class="nav-item active" data-tab="endpoints">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-            <span>Endpoints & Schema</span>
-            <span class="nav-count" id="endpointCount">0</span>
-          </button>
-          <button class="nav-item" data-tab="sandbox">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-            <span>API Tester Sandbox</span>
-          </button>
-          <button class="nav-item" data-tab="generator">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
-            <span>Data Fuzzer Studio</span>
-          </button>
-          <button class="nav-item" data-tab="sdk">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
-            <span>SDK Synthesizer</span>
-          </button>
-          <button class="nav-item" data-tab="openapi">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-            <span>OpenAPI Spec 3.0</span>
-          </button>
-        </nav>
+    <!-- MAIN STUDIO WORKSPACE -->
+    <div id="workspace">
+      <!-- LEFT PALETTE: CLOUD COMPONENTS -->
+      <aside id="palette">
+        <div class="sidebar-header">
+          <h3>Cloud Components</h3>
+          <p>Click or drag components to canvas</p>
+        </div>
 
-        <!-- Dynamic Server Settings Card -->
-        <div class="sidebar-card">
-          <div class="card-header">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-            <span>Mock Controls</span>
+        <div class="palette-scroll">
+          <!-- CATEGORY: COMPUTE -->
+          <div class="palette-category">
+            <div class="category-title">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect><rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect><line x1="6" y1="6" x2="6.01" y2="6"></line><line x1="6" y1="18" x2="6.01" y2="18"></line></svg>
+              Compute & Serverless
+            </div>
+            <div class="palette-items">
+              <div class="palette-item" data-type="ec2" draggable="true">
+                <div class="item-icon compute-bg">VM</div>
+                <div class="item-info">
+                  <span class="item-name">Virtual Machine</span>
+                  <span class="item-sub">EC2 / Compute Engine</span>
+                </div>
+              </div>
+              <div class="palette-item" data-type="lambda" draggable="true">
+                <div class="item-icon compute-bg">λ</div>
+                <div class="item-info">
+                  <span class="item-name">Serverless Function</span>
+                  <span class="item-sub">Lambda / Cloud Function</span>
+                </div>
+              </div>
+              <div class="palette-item" data-type="eks" draggable="true">
+                <div class="item-icon compute-bg">K8s</div>
+                <div class="item-info">
+                  <span class="item-name">Kubernetes Cluster</span>
+                  <span class="item-sub">EKS / GKE Mesh</span>
+                </div>
+              </div>
+            </div>
           </div>
-          <div class="control-group">
-            <label for="latencyRange">Simulated Latency: <span id="latencyValue">120ms</span></label>
-            <input type="range" id="latencyRange" min="0" max="2500" step="50" value="120">
+
+          <!-- CATEGORY: NETWORKING & SECURITY -->
+          <div class="palette-category">
+            <div class="category-title">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="16" y="16" width="6" height="6" rx="1"></rect><rect x="2" y="16" width="6" height="6" rx="1"></rect><rect x="9" y="2" width="6" height="6" rx="1"></rect><path d="M5 16v-3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3"></path><path d="M12 12V8"></path></svg>
+              Networking & Security
+            </div>
+            <div class="palette-items">
+              <div class="palette-item" data-type="alb" draggable="true">
+                <div class="item-icon network-bg">ALB</div>
+                <div class="item-info">
+                  <span class="item-name">Load Balancer</span>
+                  <span class="item-sub">Application Load Balancer</span>
+                </div>
+              </div>
+              <div class="palette-item" data-type="cloudfront" draggable="true">
+                <div class="item-icon network-bg">CDN</div>
+                <div class="item-info">
+                  <span class="item-name">CDN Edge Network</span>
+                  <span class="item-sub">CloudFront / Fastly</span>
+                </div>
+              </div>
+              <div class="palette-item" data-type="apigateway" draggable="true">
+                <div class="item-icon network-bg">API</div>
+                <div class="item-info">
+                  <span class="item-name">API Gateway</span>
+                  <span class="item-sub">REST / GraphQL Ingress</span>
+                </div>
+              </div>
+              <div class="palette-item" data-type="waf" draggable="true">
+                <div class="item-icon security-bg">WAF</div>
+                <div class="item-info">
+                  <span class="item-name">Web App Firewall</span>
+                  <span class="item-sub">WAF & DDoS Shield</span>
+                </div>
+              </div>
+            </div>
           </div>
-          <div class="control-group">
-            <label for="errorRateRange">Error Simulation: <span id="errorRateValue">0%</span></label>
-            <input type="range" id="errorRateRange" min="0" max="50" step="5" value="0">
+
+          <!-- CATEGORY: DATABASES -->
+          <div class="palette-category">
+            <div class="category-title">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path></svg>
+              Databases & Storage
+            </div>
+            <div class="palette-items">
+              <div class="palette-item" data-type="rds" draggable="true">
+                <div class="item-icon db-bg">SQL</div>
+                <div class="item-info">
+                  <span class="item-name">Managed Relational DB</span>
+                  <span class="item-sub">RDS Postgres / MySQL</span>
+                </div>
+              </div>
+              <div class="palette-item" data-type="dynamodb" draggable="true">
+                <div class="item-icon db-bg">NoSQL</div>
+                <div class="item-info">
+                  <span class="item-name">NoSQL Database</span>
+                  <span class="item-sub">DynamoDB / Cosmos</span>
+                </div>
+              </div>
+              <div class="palette-item" data-type="s3" draggable="true">
+                <div class="item-icon storage-bg">S3</div>
+                <div class="item-info">
+                  <span class="item-name">Object Storage</span>
+                  <span class="item-sub">S3 / Blob Storage</span>
+                </div>
+              </div>
+              <div class="palette-item" data-type="redis" draggable="true">
+                <div class="item-icon db-bg">Cache</div>
+                <div class="item-info">
+                  <span class="item-name">In-Memory Cache</span>
+                  <span class="item-sub">Redis / ElastiCache</span>
+                </div>
+              </div>
+            </div>
           </div>
-          <div class="control-group checkbox-group">
-            <label class="toggle-switch">
-              <input type="checkbox" id="toggleStatefulDb" checked>
-              <span class="slider"></span>
-            </label>
-            <span>Stateful CRUD Memory</span>
+        </div>
+
+        <div class="palette-footer">
+          <div class="canvas-instructions">
+            <span>💡 <strong>Tip:</strong> Drag components or tap to spawn. Drag from green port handle to connect nodes.</span>
           </div>
         </div>
       </aside>
 
-      <!-- Main Workspace Views Container -->
-      <main class="main-content">
+      <!-- CENTER CANVAS AREA -->
+      <main id="canvas-container">
+        <div class="canvas-toolbar">
+          <div class="tool-group">
+            <button id="btnZoomIn" class="tool-btn" title="Zoom In">+</button>
+            <span id="zoomLevel">100%</span>
+            <button id="btnZoomOut" class="tool-btn" title="Zoom Out">-</button>
+            <button id="btnResetView" class="tool-btn" title="Reset View">Center</button>
+          </div>
+          <div class="tool-group">
+            <button id="btnToggleGrid" class="tool-btn active" title="Toggle Snap Grid">Grid Snap: ON</button>
+            <button id="btnAutoLayout" class="tool-btn" title="Auto Align Nodes">Auto-Layout</button>
+          </div>
+          <div class="tool-group status-summary">
+            <span id="connectionCount">0 Connections</span>
+            <span id="nodeCount">0 Nodes</span>
+          </div>
+        </div>
 
-        <!-- TAB 1: ENDPOINTS & SCHEMA DESIGNER -->
-        <section id="tab-endpoints" class="tab-panel active">
-          <div class="panel-header">
-            <div>
-              <h2>API Routes & Response Schemas</h2>
-              <p class="subtitle">Define REST endpoints, headers, dynamic path params, and templated JSON responses.</p>
+        <div id="viewport">
+          <svg id="svg-connections-layer">
+            <defs>
+              <marker id="arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="#6366f1" />
+              </marker>
+              <marker id="arrow-error" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="#ef4444" />
+              </marker>
+            </defs>
+          </svg>
+
+          <div id="canvas-nodes-layer"></div>
+        </div>
+      </main>
+
+      <!-- RIGHT INSPECTOR & ANALYTICS PANEL -->
+      <aside id="inspector">
+        <div class="tab-header">
+          <button class="tab-btn active" data-tab="properties">Properties</button>
+          <button class="tab-btn" data-tab="security">
+            Security & Audit
+            <span id="securityBadgeCount" class="tab-badge warning">0</span>
+          </button>
+          <button class="tab-btn" data-tab="iac">Terraform Code</button>
+          <button class="tab-btn" data-tab="metrics">Cost Breakdown</button>
+        </div>
+
+        <!-- TAB 1: PROPERTIES PANEL -->
+        <div id="tab-properties" class="tab-content active">
+          <div id="no-selection-msg" class="empty-state">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"></circle><path d="M12 8v4"></path><path d="M12 16h.01"></path></svg>
+            <p>Select a node on the canvas to configure its instance size, scaling parameters, security flags, and cost drivers.</p>
+          </div>
+
+          <div id="node-properties-form" class="hidden">
+            <div class="inspector-section">
+              <div class="section-title">Component Identity</div>
+              <div class="form-group">
+                <label for="nodeLabel">Component Name</label>
+                <input type="text" id="nodeLabel" class="form-control" />
+              </div>
+              <div class="form-group">
+                <label>Type / Engine</label>
+                <div id="nodeTypeBadge" class="type-display">EC2 Instance</div>
+              </div>
             </div>
-            <button id="btnCreateEndpoint" class="btn btn-primary">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-              Add Endpoint
+
+            <div class="inspector-section">
+              <div class="section-title">Sizing & Performance Specs</div>
+              
+              <div class="form-group prop-spec" data-spec="instanceType">
+                <label for="propInstanceType">Instance Tier</label>
+                <select id="propInstanceType" class="form-control">
+                  <option value="t3.micro">t3.micro (1 vCPU, 1GB RAM) - $8.50/mo</option>
+                  <option value="t3.medium" selected>t3.medium (2 vCPU, 4GB RAM) - $30.40/mo</option>
+                  <option value="m5.large">m5.large (2 vCPU, 8GB RAM) - $70.08/mo</option>
+                  <option value="c5.xlarge">c5.xlarge (4 vCPU, 8GB RAM) - $122.40/mo</option>
+                  <option value="r5.2xlarge">r5.2xlarge (8 vCPU, 64GB RAM) - $368.64/mo</option>
+                </select>
+              </div>
+
+              <div class="form-group prop-spec" data-spec="instanceCount">
+                <label for="propInstanceCount">Instance / Replica Count: <span id="valInstanceCount">2</span></label>
+                <input type="range" id="propInstanceCount" min="1" max="20" value="2" class="range-slider">
+              </div>
+
+              <div class="form-group prop-spec" data-spec="storageGb">
+                <label for="propStorageGb">Allocated Storage (GB): <span id="valStorageGb">100</span> GB</label>
+                <input type="range" id="propStorageGb" min="10" max="2000" step="10" value="100" class="range-slider">
+              </div>
+
+              <div class="form-group prop-spec" data-spec="requestsPerSec">
+                <label for="propRequestsPerSec">Throughput (Req/sec): <span id="valRequestsPerSec">500</span></label>
+                <input type="range" id="propRequestsPerSec" min="10" max="10000" step="50" value="500" class="range-slider">
+              </div>
+            </div>
+
+            <div class="inspector-section">
+              <div class="section-title">Security & Availability Settings</div>
+
+              <div class="form-checkbox">
+                <input type="checkbox" id="propPublicAccess">
+                <label for="propPublicAccess">Publicly Accessible (Internet Facing)</label>
+              </div>
+
+              <div class="form-checkbox">
+                <input type="checkbox" id="propMultiAz" checked>
+                <label for="propMultiAz">High Availability (Multi-AZ Deployment)</label>
+              </div>
+
+              <div class="form-checkbox">
+                <input type="checkbox" id="propEncryption" checked>
+                <label for="propEncryption">At-Rest KMS Encryption</label>
+              </div>
+            </div>
+
+            <div class="inspector-section cost-summary-card">
+              <div class="card-label">Itemized Monthly Cost</div>
+              <div id="nodeItemizedCost" class="card-value">$60.80 / mo</div>
+            </div>
+
+            <button id="btnDeleteNode" class="btn btn-danger btn-block" style="margin-top:15px;">
+              Delete Component
             </button>
           </div>
+        </div>
 
-          <div class="workspace-grid">
-            <!-- Left: Endpoint List -->
-            <div class="endpoint-list-card">
-              <div class="card-search">
-                <input type="text" id="endpointSearch" placeholder="Filter endpoints by path or method..." class="text-input">
-              </div>
-              <div class="endpoint-items" id="endpointList">
-                <!-- Endpoint Items Rendered Here -->
-              </div>
+        <!-- TAB 2: SECURITY & AUDIT PANEL -->
+        <div id="tab-security" class="tab-content">
+          <div class="audit-summary-box">
+            <div class="score-circle" id="auditScoreCircle">
+              <span id="auditScoreVal">100%</span>
             </div>
-
-            <!-- Right: Endpoint Editor Panel -->
-            <div class="endpoint-editor-card" id="endpointEditor">
-              <div class="empty-state" id="editorEmptyState">
-                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-                <h3>No Endpoint Selected</h3>
-                <p>Select an endpoint from the left or create a new one to edit contract properties.</p>
-              </div>
-
-              <div class="editor-content hidden" id="editorForm">
-                <div class="editor-header">
-                  <span class="method-tag method-get" id="editorMethodBadge">GET</span>
-                  <input type="text" id="editPath" class="text-input font-mono path-input" placeholder="/api/v1/resource">
-                  <button id="btnSaveEndpoint" class="btn btn-primary btn-sm">Save Route</button>
-                  <button id="btnDeleteEndpoint" class="btn btn-danger btn-sm" title="Delete Endpoint">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-                  </button>
-                </div>
-
-                <div class="form-row">
-                  <div class="form-col">
-                    <label>HTTP Method</label>
-                    <select id="editMethod" class="select-input">
-                      <option value="GET">GET</option>
-                      <option value="POST">POST</option>
-                      <option value="PUT">PUT</option>
-                      <option value="PATCH">PATCH</option>
-                      <option value="DELETE">DELETE</option>
-                    </select>
-                  </div>
-                  <div class="form-col">
-                    <label>HTTP Status Response</label>
-                    <select id="editStatus" class="select-input font-mono">
-                      <option value="200">200 OK</option>
-                      <option value="201">201 Created</option>
-                      <option value="204">204 No Content</option>
-                      <option value="400">400 Bad Request</option>
-                      <option value="401">401 Unauthorized</option>
-                      <option value="404">404 Not Found</option>
-                      <option value="500">500 Server Error</option>
-                    </select>
-                  </div>
-                  <div class="form-col">
-                    <label>Group / Category</label>
-                    <input type="text" id="editCategory" class="text-input" placeholder="e.g., Users, Billing">
-                  </div>
-                </div>
-
-                <div class="form-group">
-                  <label>Endpoint Description</label>
-                  <input type="text" id="editDescription" class="text-input" placeholder="Describes what this route does...">
-                </div>
-
-                <!-- Response Body Template Editor -->
-                <div class="form-group">
-                  <div class="label-with-tags">
-                    <label>Response Body (Templated JSON)</label>
-                    <div class="template-tags">
-                      <span class="tag-pill" title="Insert Dynamic UUID" onclick="insertTemplateTag('{{uuid}}')">{{uuid}}</span>
-                      <span class="tag-pill" title="Insert Full Name" onclick="insertTemplateTag('{{name}}')">{{name}}</span>
-                      <span class="tag-pill" title="Insert Email" onclick="insertTemplateTag('{{email}}')">{{email}}</span>
-                      <span class="tag-pill" title="Insert Date ISO" onclick="insertTemplateTag('{{date}}')">{{date}}</span>
-                      <span class="tag-pill" title="Insert Path Param" onclick="insertTemplateTag('{{req.params.id}}')">{{req.params.id}}</span>
-                    </div>
-                  </div>
-                  <textarea id="editResponseBody" class="code-textarea font-mono" rows="12" placeholder="{\n  &quot;status&quot;: &quot;success&quot;\n}"></textarea>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- TAB 2: API TESTER SANDBOX -->
-        <section id="tab-sandbox" class="tab-panel">
-          <div class="panel-header">
-            <div>
-              <h2>Interactive API Client Sandbox</h2>
-              <p class="subtitle">Execute real requests against your stateful synthetic mock engine or remote APIs.</p>
+            <div class="score-meta">
+              <h4 id="auditStatusHeading">Architecture Secure</h4>
+              <p id="auditStatusSub">No high-risk vulnerabilities detected.</p>
             </div>
           </div>
 
-          <div class="sandbox-container">
-            <!-- Request Bar -->
-            <div class="request-bar">
-              <select id="sbMethod" class="select-input method-select font-mono">
-                <option value="GET">GET</option>
-                <option value="POST">POST</option>
-                <option value="PUT">PUT</option>
-                <option value="PATCH">PATCH</option>
-                <option value="DELETE">DELETE</option>
-              </select>
-              <input type="text" id="sbUrl" class="text-input font-mono flex-1" placeholder="/api/v1/users">
-              <button id="sbSendBtn" class="btn btn-primary btn-lg">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-                Send Request
-              </button>
-            </div>
-
-            <!-- Quick Preset Endpoint Chips -->
-            <div class="preset-chips-container">
-              <span class="chips-label">Quick Execute:</span>
-              <div id="quickRouteChips" class="chips-wrapper">
-                <!-- Dynamic Chips -->
-              </div>
-            </div>
-
-            <div class="sandbox-split">
-              <!-- Left: Request Configuration -->
-              <div class="sandbox-card">
-                <div class="card-tabs">
-                  <button class="sb-tab-btn active" data-sb-tab="headers">Headers</button>
-                  <button class="sb-tab-btn" data-sb-tab="body">Request Body</button>
-                </div>
-
-                <div class="sb-tab-content active" id="sb-tab-headers">
-                  <div class="kv-editor" id="headersKv">
-                    <div class="kv-row">
-                      <input type="text" class="text-input font-mono kv-key" value="Content-Type">
-                      <input type="text" class="text-input font-mono kv-value" value="application/json">
-                      <button class="btn-icon btn-remove-kv">&times;</button>
-                    </div>
-                    <div class="kv-row">
-                      <input type="text" class="text-input font-mono kv-key" value="Authorization">
-                      <input type="text" class="text-input font-mono kv-value" value="Bearer mock-token-88493">
-                      <button class="btn-icon btn-remove-kv">&times;</button>
-                    </div>
-                  </div>
-                  <button id="btnAddHeader" class="btn btn-secondary btn-sm mt-2">+ Add Header</button>
-                </div>
-
-                <div class="sb-tab-content" id="sb-tab-body">
-                  <textarea id="sbRequestBody" class="code-textarea font-mono" rows="10" placeholder="{\n  &quot;name&quot;: &quot;Jane Doe&quot;,\n  &quot;email&quot;: &quot;jane@example.com&quot;\n}"></textarea>
-                </div>
-              </div>
-
-              <!-- Right: Response Output -->
-              <div class="sandbox-card">
-                <div class="response-header-bar">
-                  <span class="title">Response</span>
-                  <div class="response-meta" id="responseMeta" style="display: none;">
-                    <span class="res-status-badge status-2xx" id="resStatus">200 OK</span>
-                    <span class="res-stat font-mono" id="resTime">45 ms</span>
-                    <span class="res-stat font-mono" id="resSize">1.2 KB</span>
-                  </div>
-                </div>
-
-                <div class="response-body-wrapper">
-                  <pre id="responseBodyDisplay" class="font-mono response-display">Click "Send Request" to test endpoint response...</pre>
-                </div>
-              </div>
-            </div>
-
-            <!-- Execution Logs Bar -->
-            <div class="sandbox-logs-card">
-              <div class="logs-header">
-                <h3>Live Execution Log</h3>
-                <button id="btnClearLogs" class="btn btn-text btn-sm">Clear</button>
-              </div>
-              <div class="logs-console font-mono" id="sandboxLogsConsole">
-                <div class="log-entry info">[System] Ready to test API endpoints locally.</div>
-              </div>
-            </div>
+          <div class="section-title flex-between">
+            <span>Security & Best Practice Audits</span>
+            <button id="btnAutoFixAll" class="btn btn-xs btn-primary">1-Click Auto-Fix</button>
           </div>
-        </section>
 
-        <!-- TAB 3: DATA FUZZER STUDIO -->
-        <section id="tab-generator" class="tab-panel">
-          <div class="panel-header">
-            <div>
-              <h2>Synthetic Data Fuzzer</h2>
-              <p class="subtitle">Generate realistic datasets in bulk using flexible domain-specific templates.</p>
+          <div id="auditList" class="audit-list">
+            <!-- Dynamic list of findings -->
+          </div>
+        </div>
+
+        <!-- TAB 3: TERRAFORM IAC EXPORTER PANEL -->
+        <div id="tab-iac" class="tab-content">
+          <div class="iac-toolbar">
+            <span class="code-filename">main.tf (HashiCorp HCL v1.5)</span>
+            <button id="btnCopyTf" class="btn btn-xs btn-secondary">Copy Code</button>
+          </div>
+          <pre id="iacCodeBlock"><code id="iacCodeText"># Synthesizing Infrastructure Code...</code></pre>
+        </div>
+
+        <!-- TAB 4: METRICS & COST BREAKDOWN -->
+        <div id="tab-metrics" class="tab-content">
+          <div class="inspector-section">
+            <div class="section-title">System SLA & Availability</div>
+            <div class="sla-display">
+              <div class="sla-value" id="metricsSlaValue">99.95%</div>
+              <div class="sla-sub">Est. Downtime: ~4.38 hours/year</div>
             </div>
           </div>
 
-          <div class="fuzzer-container">
-            <div class="fuzzer-controls-card">
-              <div class="form-row">
-                <div class="form-col">
-                  <label>Preset Schema</label>
-                  <select id="fuzzPreset" class="select-input">
-                    <option value="users">SaaS User Directory</option>
-                    <option value="ecommerce">E-Commerce Products & Orders</option>
-                    <option value="finance">Financial Transactions</option>
-                    <option value="iot">IoT Device Telemetry</option>
-                    <option value="custom">Custom Template AST</option>
-                  </select>
-                </div>
-                <div class="form-col">
-                  <label>Record Count</label>
-                  <input type="number" id="fuzzCount" class="text-input font-mono" value="10" min="1" max="1000">
-                </div>
-                <div class="form-col">
-                  <label>Export Format</label>
-                  <select id="fuzzFormat" class="select-input">
-                    <option value="json">JSON Array</option>
-                    <option value="csv">CSV (Comma Separated)</option>
-                    <option value="sql">SQL Insert Statements</option>
-                  </select>
-                </div>
-                <div class="form-col btn-align-bottom">
-                  <button id="btnGenerateFuzz" class="btn btn-primary w-full">Generate Dataset</button>
-                </div>
-              </div>
-
-              <div class="form-group mt-3" id="customFuzzTemplateGroup" style="display:none;">
-                <label>Custom Record JSON Template</label>
-                <textarea id="customFuzzTemplate" class="code-textarea font-mono" rows="4">{\n  "id": "{{uuid}}",\n  "title": "{{name}}",\n  "created_at": "{{date}}"\n}</textarea>
-              </div>
-            </div>
-
-            <div class="fuzzer-output-card">
-              <div class="output-header">
-                <span class="title">Generated Synthetic Output</span>
-                <div class="actions">
-                  <button id="btnCopyFuzz" class="btn btn-secondary btn-sm">Copy Code</button>
-                  <button id="btnDownloadFuzz" class="btn btn-secondary btn-sm">Download File</button>
-                </div>
-              </div>
-              <textarea id="fuzzOutputText" class="code-textarea font-mono readonly-editor" readonly placeholder="Click Generate Dataset to preview mock data..."></textarea>
+          <div class="inspector-section">
+            <div class="section-title">Monthly Cost Breakdown by Service</div>
+            <div id="costBreakdownList" class="cost-breakdown-list">
+              <!-- Itemized dynamic list -->
             </div>
           </div>
-        </section>
-
-        <!-- TAB 4: SDK SYNTHESIZER -->
-        <section id="tab-sdk" class="tab-panel">
-          <div class="panel-header">
-            <div>
-              <h2>SDK Synthesizer</h2>
-              <p class="subtitle">Auto-generate fully typed, production-ready client libraries for your configured project.</p>
-            </div>
-          </div>
-
-          <div class="sdk-container">
-            <div class="sdk-lang-selector">
-              <button class="sdk-lang-btn active" data-lang="typescript">TypeScript (Fetch)</button>
-              <button class="sdk-lang-btn" data-lang="javascript">JavaScript (Axios)</button>
-              <button class="sdk-lang-btn" data-lang="python">Python (Requests)</button>
-              <button class="sdk-lang-btn" data-lang="go">Go Client</button>
-              <button class="sdk-lang-btn" data-lang="curl">cURL Shell Script</button>
-            </div>
-
-            <div class="sdk-code-card">
-              <div class="code-card-header">
-                <span id="sdkLangTitle" class="title">TypeScript SDK</span>
-                <button id="btnCopySdk" class="btn btn-secondary btn-sm">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-                  Copy SDK Code
-                </button>
-              </div>
-              <pre id="sdkCodeDisplay" class="font-mono sdk-code-display">// Select a target programming language to synthesize SDK code...</pre>
-            </div>
-          </div>
-        </section>
-
-        <!-- TAB 5: OPENAPI SPEC EXPORT -->
-        <section id="tab-openapi" class="tab-panel">
-          <div class="panel-header">
-            <div>
-              <h2>OpenAPI 3.0 Specification Synthesizer</h2>
-              <p class="subtitle">Standardized API documentation contract ready for Swagger, Postman, or Gateway imports.</p>
-            </div>
-            <div>
-              <button id="btnCopyOpenApi" class="btn btn-secondary btn-sm">Copy Spec</button>
-              <button id="btnDownloadOpenApi" class="btn btn-primary btn-sm">Download openapi.json</button>
-            </div>
-          </div>
-
-          <div class="openapi-container">
-            <textarea id="openApiSpecDisplay" class="code-textarea font-mono readonly-editor" readonly></textarea>
-          </div>
-        </section>
-
-      </main>
+        </div>
+      </aside>
     </div>
   </div>
 
-  <!-- Modal for Creating New Endpoint -->
-  <div id="modalNewEndpoint" class="modal-overlay">
-    <div class="modal-box">
+  <!-- EXPORT MODAL -->
+  <div id="exportModal" class="modal-overlay hidden">
+    <div class="modal-card">
       <div class="modal-header">
-        <h3>Add New Route Endpoint</h3>
-        <button class="modal-close" onclick="closeModal('modalNewEndpoint')">&times;</button>
+        <h3 id="modalTitle">Export Terraform Infrastructure Code</h3>
+        <button id="btnCloseModal" class="close-btn">&times;</button>
       </div>
       <div class="modal-body">
-        <div class="form-row">
-          <div class="form-col">
-            <label>HTTP Method</label>
-            <select id="newMethod" class="select-input">
-              <option value="GET">GET</option>
-              <option value="POST">POST</option>
-              <option value="PUT">PUT</option>
-              <option value="PATCH">PATCH</option>
-              <option value="DELETE">DELETE</option>
-            </select>
-          </div>
-          <div class="form-col flex-2">
-            <label>Path Pattern</label>
-            <input type="text" id="newPath" class="text-input font-mono" placeholder="/api/v1/orders/:id">
-          </div>
-        </div>
-        <div class="form-group mt-2">
-          <label>Category Tag</label>
-          <input type="text" id="newCategory" class="text-input" placeholder="e.g. Orders">
-        </div>
-        <div class="form-group mt-2">
-          <label>Description</label>
-          <input type="text" id="newDescription" class="text-input" placeholder="Short description of the endpoint">
-        </div>
+        <p id="modalDescription">Copy the synthesized Terraform syntax below or download as a <code>main.tf</code> file for deployment via <code>terraform apply</code>.</p>
+        <textarea id="modalCodeArea" readonly></textarea>
       </div>
       <div class="modal-footer">
-        <button class="btn btn-secondary" onclick="closeModal('modalNewEndpoint')">Cancel</button>
-        <button id="btnConfirmCreateEndpoint" class="btn btn-primary">Create Route</button>
+        <button id="btnDownloadTfFile" class="btn btn-primary">Download main.tf</button>
+        <button id="btnCloseModalBtn" class="btn btn-secondary">Close</button>
       </div>
     </div>
   </div>
-
-  <!-- Toast Notification Container -->
-  <div id="toastContainer" class="toast-container"></div>
 
   <script src="app.js"></script>
 </body>

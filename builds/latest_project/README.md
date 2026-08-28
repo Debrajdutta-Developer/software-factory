@@ -1,73 +1,64 @@
-# APIForge Studio — Autonomous Micro-SaaS API Designer, Stateful Mock Engine & SDK Synthesizer
+# CloudCraft Studio - Autonomous Cloud Architecture, Cost & Security Risk Synthesizer
 
-> **Problem Solved:** Frontend developers, mobile engineers, and product managers often face severe productivity bottlenecks waiting for backend APIs to be designed, deployed, or stabilized. Existing solutions either require complex backend setups, paid cloud services, or produce static mock data without state persistence or client SDK generation.
+## Overview
+**CloudCraft Studio** is a client-side cloud architecture modeling engine, security auditor, and Infrastructure-as-Code (IaC) synthesizer. It allows developers, DevOps engineers, and cloud architects to visually design cloud topologies (AWS/GCP/Azure concepts), perform real-time cost estimation, run automated security and reliability audits, and instantly synthesize valid Terraform HCL code.
 
-**APIForge Studio** is a browser-native, zero-dependency workspace that enables developers to design RESTful API contracts, run stateful synthetic mock servers with low-latency dynamic dynamic routing directly in browser memory, fuzz dynamic test data, and synthesize client SDKs (TypeScript, Python, Go, JavaScript, Curl) alongside valid OpenAPI 3.0 specs in real-time.
+## The Pain Point
+Designing cloud infrastructure often suffers from fragmented workflows:
+1. **Diagramming tools (e.g., Lucidchart/Draw.io)** produce static images that drift from reality and lack cost/security logic.
+2. **Cost estimation (e.g., AWS Calculator)** is disconnected from architectural visual topologies.
+3. **Security static analysis (e.g., Checkov, tfsec)** occurs late in the DevOps pipeline after infrastructure code is written.
+4. **Writing IaC manually** is repetitive and prone to syntax or misconfiguration errors.
 
----
-
-## 🌟 Key Features
-
-1. **Visual Endpoint & Schema Designer**:
-   - Support for `GET`, `POST`, `PUT`, `PATCH`, and `DELETE` methods.
-   - Dynamic route params (e.g. `/api/v1/users/:id`).
-   - Smart dynamic templates (`{{uuid}}`, `{{name}}`, `{{email}}`, `{{company}}`, `{{date}}`, `{{price}}`, `{{req.params.id}}`).
-
-2. **Stateful In-Browser Mock Engine**:
-   - Persistent virtual database backed by LocalStorage & IndexedDB semantics.
-   - Instant CRUD logic automatically executed for endpoints (`POST` creates items, `PUT` updates, `DELETE` removes, `GET` reads).
-   - Configurable latency simulation (0ms to 3000ms) and random error injection (0% to 50% fault rate).
-
-3. **Multi-Language SDK & Client Synthesizer**:
-   - Instant code generation for:
-     - **TypeScript** (Strongly typed Async Client with interfaces)
-     - **JavaScript** (Fetch & Axios variants)
-     - **Python** (`requests` & `httpx` with `dataclasses`)
-     - **Go** (`net/http` client structs)
-     - **cURL** command line calls
-   - Full **OpenAPI 3.0 Spec Synthesizer** (JSON export).
-
-4. **Synthetic Data Fuzzer & Generator**:
-   - Pre-built dataset templates: E-Commerce, SaaS User Directory, Financial Ledger, IoT Sensor Metrics, Task Tracker.
-   - Export synthetic data sets in JSON, CSV, and SQL `INSERT` formats.
-
-5. **Interactive API Sandbox & Request Inspector**:
-   - Native HTTP runner for both internal dynamic dynamic dynamic mock routes and real external CORS-enabled APIs.
-   - Request history, execution latency charts, HTTP response status indicators, and headers viewer.
-
-6. **Zero-Touch Local Workspace Engine**:
-   - 100% Client-Side. No login required, zero server deployments, local JSON import/export project workspace.
+CloudCraft Studio solves this by unifying **Visual Canvas Modeling**, **Real-Time Cost Calculations**, **Architectural Security & Reliability Auditing**, and **Bi-directional Terraform IaC Generation** into a single client-side application.
 
 ---
 
-## 🛠 Project Architecture
+## Key Features
 
-```
-APIForge Studio
-├── index.html        # Single Page Application structure with tabbed workspace UI
-├── style.css         # Production CSS design system (Dark mode studio theme, responsive design)
-└── app.js            # Core App Engine:
-                      #   ├── Data Generator / Templating Engine
-                      #   ├── Stateful Mock DB & Route Resolver
-                      #   ├── HTTP Request Sandbox Execution Core
-                      #   ├── SDK Code Synthesizers (TS, Python, Go, Curl)
-                      #   └── Project Import/Export Manager
-```
+### 1. Interactive Topology Canvas
+- Visual node placement with smart snap grid.
+- Vector-based connection wiring with curve routing.
+- Node categories: Compute (EC2/VM, Lambda), Storage (S3/Bucket, EFS), Database (RDS, DynamoDB, Redis), Networking (VPC, Gateway, CDN, Load Balancer), Security (WAF, IAM, KMS), Containers (Kubernetes Cluster).
+
+### 2. Real-Time Cost Estimation Engine
+- Calculates monthly infrastructure costs dynamically based on node properties (instances, storage size, requests/sec, throughput, high availability multi-AZ toggles).
+- Detailed itemized cost breakdowns and visual cost metrics.
+
+### 3. Automated Security & Reliability Audit Engine
+- Evaluates active topologies against cloud best practices (CIS Benchmarks, AWS Well-Architected Framework).
+- Identifies critical misconfigurations:
+  - Database directly exposed to Public Internet Gateways without Subnet/WAF insulation.
+  - Storage buckets lacking KMS encryption or versioning.
+  - Single Points of Failure (SPOF) - database or compute instances without High Availability or Auto-Scaling.
+  - Missing CDN/WAF on edge-facing load balancers.
+- **1-Click Auto-Fix**: Automatically resolves architectural risks (e.g., applies encryption, inserts firewalls/subnets).
+
+### 4. SLA & Availability Multiplier Engine
+- Computes aggregated availability SLAs based on series and parallel component dependencies (e.g., `99.9% x 99.95% = 99.85%` uptime).
+
+### 5. Production-Ready Terraform HCL Exporter
+- Synthesizes fully formatted, deployable Terraform code (`main.tf`) matching the designed visual canvas.
+- Includes provider configurations, resource declarations, VPC associations, and security groups.
+
+### 6. Architecture Templates & State Export
+- Pre-loaded enterprise templates:
+  - Scalable High-Availability 3-Tier Web Application
+  - Event-Driven Serverless Microservices Pipeline
+  - Enterprise Kubernetes (EKS) Microservices Stack
+  - Big Data & Analytics Lake
+- Export/Import workspace JSON files and download comprehensive Architecture PDF/PNG audit reports.
 
 ---
 
-## 🚀 Getting Started
-
-1. Open `index.html` in any modern web browser.
-2. Explore the pre-loaded **PulseMetrics SaaS API** or create your own custom endpoints.
-3. Switch to the **API Tester Sandbox** to execute mock requests with real state persistence.
-4. Open **SDK Synthesizer** to generate ready-to-use client libraries for your project.
-5. Export your OpenAPI 3.0 specification or backup your workspace JSON at any time.
+## Technical Architecture
+- **Language**: Pure Vanilla JavaScript (ES6+), HTML5 Canvas/SVG, CSS3 (Modern Flexbox/Grid UI).
+- **Dependencies**: Zero external npm packages or CDNs required. Lightweight, offline-capable, and ultra-fast.
+- **State Management**: Reactive State Store driving canvas UI, security engine, cost calculator, and IaC parser simultaneously.
 
 ---
 
-## 💻 Tech Stack
-- **Frontend Core:** Standard HTML5, CSS Variables, Native JavaScript ES6+
-- **Icons:** Embedded Inline SVG System (Lucide style)
-- **Data Engine:** Web Storage API, Synthetic AST Evaluator
-- **Dependencies:** None (0 external CDN scripts, pure standalone application)
+## How to Run
+1. Clone or download the repository.
+2. Open `index.html` in any modern web browser (Chrome, Firefox, Safari, Edge).
+3. Start designing cloud architectures, loading templates, and exporting Terraform manifests immediately.
