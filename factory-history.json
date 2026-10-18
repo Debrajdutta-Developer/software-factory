@@ -1,1 +1,20 @@
-[]
+[
+  {
+    "released_at": "2026-10-18T07:57:48.880485+00:00",
+    "name": "HAR Sanitizer & Privacy Guard",
+    "slug": "har-sanitizer",
+    "problem": "Sharing HTTP Archive (HAR) files and API logs during bug triage routinely leaks session cookies, Bearer tokens, API credentials, and user data to third parties, public GitHub issues, or support tickets.",
+    "category": "Developer Tools",
+    "features": [
+      "100% offline, client-side parsing and deep sanitization of HAR (HTTP Archive) JSON files and cURL logs",
+      "Automatic heuristic detection of Authorization headers, Bearer tokens, JWTs, AWS credentials, session cookies, and sensitive payload keys",
+      "Configurable redaction policies: full replacement, token hash pseudonymization, or complete header/cookie stripping",
+      "Interactive request browser with search, HTTP status filtering, and leak badges for headers, cookies, query parameters, and POST data",
+      "Side-by-side before/after inspector highlighting exactly what was sanitized",
+      "One-click export of sanitized HAR files or sanitized cURL commands, with a built-in sample data generator for instant testing"
+    ],
+    "path": "builds/2026-10-18-har-sanitizer",
+    "fingerprint": "eb8a18bcbbc8579f9559",
+    "model": "gemini-3.7-flash"
+  }
+]

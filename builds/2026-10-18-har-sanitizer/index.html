@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HAR Sanitizer &amp; Privacy Guard</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app-container">
+    <header class="app-header">
+      <div class="header-brand">
+        <div class="brand-icon">🔒</div>
+        <div>
+          <h1>HAR Sanitizer</h1>
+          <p class="subtitle">Local-first network archive scrubber &amp; credential redactor</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button id="btn-load-sample" class="btn secondary-btn">Load Sample HAR</button>
+        <label for="file-input" class="btn file-btn">Select .har File</label>
+        <input type="file" id="file-input" accept=".har,.json" />
+        <button id="btn-export-har" class="btn primary-btn" disabled>Export Clean HAR</button>
+      </div>
+    </header>
+
+    <!-- Metric Stats Strip -->
+    <div class="stats-strip" id="stats-strip">
+      <div class="stat-box">
+        <span class="stat-label">Requests</span>
+        <span class="stat-value" id="stat-requests">0</span>
+      </div>
+      <div class="stat-box danger">
+        <span class="stat-label">Detected Leaks</span>
+        <span class="stat-value" id="stat-leaks">0</span>
+      </div>
+      <div class="stat-box warning">
+        <span class="stat-label">Auth &amp; Tokens</span>
+        <span class="stat-value" id="stat-auth">0</span>
+      </div>
+      <div class="stat-box warning">
+        <span class="stat-label">Session Cookies</span>
+        <span class="stat-value" id="stat-cookies">0</span>
+      </div>
+      <div class="stat-box success">
+        <span class="stat-label">Sanitized Items</span>
+        <span class="stat-value" id="stat-sanitized">0</span>
+      </div>
+    </div>
+
+    <!-- Main Content Layout -->
+    <div class="main-layout">
+      <!-- Left Settings & List View -->
+      <section class="sidebar-pane">
+        <!-- Configuration / Rules Panel -->
+        <div class="panel rules-panel">
+          <div class="panel-header">
+            <h2>Sanitization Rules</h2>
+            <button id="btn-reset-rules" class="text-btn">Defaults</button>
+          </div>
+          <div class="rules-grid">
+            <label class="toggle-control">
+              <input type="checkbox" id="rule-auth-headers" checked />
+              <span>Auth Headers (Authorization, Bearer, API-Key)</span>
+            </label>
+            <label class="toggle-control">
+              <input type="checkbox" id="rule-cookies" checked />
+              <span>All Cookies &amp; Set-Cookie</span>
+            </label>
+            <label class="toggle-control">
+              <input type="checkbox" id="rule-query-params" checked />
+              <span>Auth Query Params (token, key, secret)</span>
+            </label>
+            <label class="toggle-control">
+              <input type="checkbox" id="rule-body-payload" checked />
+              <span>JSON Body Keys (password, secret, token)</span>
+            </label>
+            <label class="toggle-control">
+              <input type="checkbox" id="rule-jwts" checked />
+              <span>Deep Regex (JWTs, Bearer strings, AWS IDs)</span>
+            </label>
+          </div>
+
+          <div class="rule-options">
+            <label for="redaction-mode">Redaction Style:</label>
+            <select id="redaction-mode" class="select-input">
+              <option value="mask">Mask ([REDACTED])</option>
+              <option value="pseudonym">Pseudonymize (Hash)</option>
+              <option value="remove">Drop / Strip completely</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Requests List Filter & Container -->
+        <div class="panel requests-panel">
+          <div class="search-filter-bar">
+            <input type="text" id="search-input" aria-label="Filter by URL, method, status" title="Filter by URL, method, status" class="text-input" />
+            <select id="status-filter" class="select-input compact">
+              <option value="all">All Status</option>
+              <option value="leaks">Has Leaks Only</option>
+              <option value="2xx">2xx Success</option>
+              <option value="4xx">4xx Error</option>
+              <option value="5xx">5xx Server</option>
+            </select>
+          </div>
+
+          <div id="empty-state" class="drop-zone">
+            <div class="drop-content">
+              <div class="upload-icon">📂</div>
+              <p><strong>Drag &amp; drop a .har file here</strong></p>
+              <p class="caption">or click 'Load Sample HAR' to test instantly</p>
+            </div>
+          </div>
+
+          <div class="requests-list" id="requests-list"></div>
+        </div>
+      </section>
+
+      <!-- Right Detailed Inspector Pane -->
+      <section class="detail-pane" id="detail-pane">
+        <div class="empty-detail" id="detail-empty-message">
+          <p>Select a request from the list to inspect sanitization details.</p>
+        </div>
+
+        <div class="detail-content" id="detail-content" style="display: none;">
+          <div class="detail-header">
+            <div class="req-headline">
+              <span class="badge-method" id="detail-method">GET</span>
+              <span class="detail-url" id="detail-url"></span>
+            </div>
+            <div class="detail-actions">
+              <button id="btn-copy-curl" class="btn secondary-btn compact-btn">Copy Clean cURL</button>
+              <button id="btn-copy-json" class="btn secondary-btn compact-btn">Copy Clean JSON</button>
+            </div>
+          </div>
+
+          <div class="tabs-bar">
+            <button class="tab-btn active" data-tab="tab-headers">Headers</button>
+            <button class="tab-btn" data-tab="tab-query">Query Params</button>
+            <button class="tab-btn" data-tab="tab-cookies">Cookies</button>
+            <button class="tab-btn" data-tab="tab-body">Request Body</button>
+            <button class="tab-btn" data-tab="tab-response">Response Headers</button>
+          </div>
+
+          <div class="tab-views">
+            <div class="tab-pane active" id="tab-headers">
+              <table class="data-table" id="table-headers">
+                <thead>
+                  <tr><th>Header</th><th>Original Value</th><th>Sanitized Value</th><th>Status</th></tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+
+            <div class="tab-pane" id="tab-query">
+              <table class="data-table" id="table-query">
+                <thead>
+                  <tr><th>Parameter</th><th>Original Value</th><th>Sanitized Value</th><th>Status</th></tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+
+            <div class="tab-pane" id="tab-cookies">
+              <table class="data-table" id="table-cookies">
+                <thead>
+                  <tr><th>Cookie Name</th><th>Original Value</th><th>Sanitized Value</th><th>Status</th></tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+
+            <div class="tab-pane" id="tab-body">
+              <div class="diff-container">
+                <div class="diff-box">
+                  <h4>Original Body</h4>
+                  <pre id="body-original"></pre>
+                </div>
+                <div class="diff-box">
+                  <h4>Sanitized Body</h4>
+                  <pre id="body-sanitized"></pre>
+                </div>
+              </div>
+            </div>
+
+            <div class="tab-pane" id="tab-response">
+              <table class="data-table" id="table-response">
+                <thead>
+                  <tr><th>Response Header</th><th>Original Value</th><th>Sanitized Value</th><th>Status</th></tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <div id="toast" class="toast"></div>
+  <script src="app.js"></script>
+</body>
+</html>
