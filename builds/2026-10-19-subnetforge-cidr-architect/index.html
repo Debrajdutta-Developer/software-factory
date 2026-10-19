@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SubnetForge - Visual CIDR & VPC Architect</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="app-header">
+    <div class="brand-group">
+      <div class="logo-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="2" y="2" width="20" height="8" rx="2" />
+          <rect x="2" y="14" width="20" height="8" rx="2" />
+          <line x1="6" y1="10" x2="6" y2="14" />
+          <line x1="18" y1="10" x2="18" y2="14" />
+          <circle cx="6" cy="6" r="1" fill="currentColor" />
+          <circle cx="18" cy="18" r="1" fill="currentColor" />
+        </svg>
+      </div>
+      <div>
+        <h1>SubnetForge</h1>
+        <p class="tagline">Visual CIDR Planner & VPC Network Architect</p>
+      </div>
+    </div>
+
+    <div class="header-actions">
+      <div class="preset-picker-group">
+        <label for="presetSelect">Architecture Preset:</label>
+        <select id="presetSelect">
+          <option value="">-- Select Preset --</option>
+          <option value="aws-3tier">AWS Multi-AZ 3-Tier VPC (10.0.0.0/16)</option>
+          <option value="k8s-vpc">K8s Production VPC (172.20.0.0/16)</option>
+          <option value="branch-office">Branch Office LAN (192.168.0.0/22)</option>
+          <option value="micro-vpc">Compact Microservices VPC (10.100.0.0/20)</option>
+        </select>
+      </div>
+
+      <button id="btnExportConfig" class="btn secondary" title="Export current project JSON">
+        <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Save JSON
+      </button>
+      <button id="btnImportConfig" class="btn secondary" title="Import project JSON">
+        <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        Load JSON
+      </button>
+      <input type="file" id="fileImport" accept=".json,application/json" style="display:none" />
+      <button id="btnReset" class="btn danger-outline" title="Clear all and reset">
+        Reset
+      </button>
+    </div>
+  </header>
+
+  <main class="app-container">
+    <!-- Top Settings Bar -->
+    <section class="network-bar card">
+      <div class="network-inputs">
+        <div class="form-field">
+          <label for="baseCidrInput">Root Network CIDR</label>
+          <div class="input-inline">
+            <input type="text" id="baseCidrInput" value="10.0.0.0/16" spellcheck="false" />
+            <button id="btnApplyRoot" class="btn primary">Set</button>
+          </div>
+          <span id="baseCidrError" class="field-error"></span>
+        </div>
+
+        <div class="form-field">
+          <label for="cloudProviderSelect">Cloud / RFC Provider</label>
+          <select id="cloudProviderSelect">
+            <option value="aws">AWS (5 Reserved IPs per Subnet)</option>
+            <option value="azure">Azure (5 Reserved IPs per Subnet)</option>
+            <option value="gcp">GCP (4 Reserved IPs per Subnet)</option>
+            <option value="rfc">Standard RFC 1918 (2 Reserved IPs)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <span class="stat-label">Total Capacity</span>
+          <span class="stat-value" id="statTotalHosts">65,536</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Allocated</span>
+          <span class="stat-value" id="statAllocatedHosts">0</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Available Free</span>
+          <span class="stat-value" id="statFreeHosts">65,536</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Space Utilized</span>
+          <span class="stat-value" id="statUtilization">0.0%</span>
+        </div>
+        <div class="stat-card status-indicator" id="statStatusCard">
+          <span class="stat-label">Health</span>
+          <span class="stat-value badge ok" id="statHealthBadge">Clean</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Visual Space Distribution Map -->
+    <section class="visual-map-section card">
+      <div class="section-header">
+        <div class="section-title-wrap">
+          <h2>Address Space Visualization</h2>
+          <p class="section-sub">Interactive proportional map of <span id="rootSpanLabel">10.0.0.0/16</span>. Click blocks to inspect or split.</p>
+        </div>
+        <div class="map-legend">
+          <span class="legend-item"><span class="legend-color tier-public"></span> Public</span>
+          <span class="legend-item"><span class="legend-color tier-app"></span> App / Private</span>
+          <span class="legend-item"><span class="legend-color tier-db"></span> Database</span>
+          <span class="legend-item"><span class="legend-color tier-mgmt"></span> Mgmt / K8s</span>
+          <span class="legend-item"><span class="legend-color free-block"></span> Free Space</span>
+          <span class="legend-item"><span class="legend-color collision-block"></span> Collision</span>
+        </div>
+      </div>
+
+      <div class="visual-bar-wrapper">
+        <div class="visual-bar" id="visualBar"></div>
+      </div>
+
+      <div class="bar-scale-labels">
+        <span id="scaleStart">10.0.0.0</span>
+        <span id="scaleMid">10.0.128.0</span>
+        <span id="scaleEnd">10.0.255.255</span>
+      </div>
+    </section>
+
+    <!-- Main Work Area: Left Subnet Manager, Right Inspector & Code Gen -->
+    <div class="workspace-grid">
+      <!-- Subnet Manager Column -->
+      <section class="manager-column card">
+        <div class="section-header flex-between">
+          <div>
+            <h2>Subnet Allocations</h2>
+            <p class="section-sub">Define tiers, compute masks, and detect IP collisions.</p>
+          </div>
+          <div class="manager-quick-actions">
+            <button id="btnAutoPack" class="btn secondary-outline" title="Fill the next free network gap with a new subnet">
+              Auto-Add Next Free
+            </button>
+          </div>
+        </div>
+
+        <!-- Add Subnet Form -->
+        <form id="addSubnetForm" class="add-subnet-form">
+          <div class="form-row">
+            <div class="input-col">
+              <label for="subName">Subnet Name</label>
+              <input type="text" id="subName" value="" required />
+            </div>
+            <div class="input-col sm">
+              <label for="subTier">Tier</label>
+              <select id="subTier">
+                <option value="public">Public</option>
+                <option value="app">App / Compute</option>
+                <option value="db">Database</option>
+                <option value="mgmt">Management / K8s</option>
+              </select>
+            </div>
+            <div class="input-col sm">
+              <label for="subPrefix">Prefix / CIDR</label>
+              <select id="subPrefix"></select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="input-col">
+              <label for="subIp">Starting Network IP (Auto-fills if empty)</label>
+              <input type="text" id="subIp" value="" spellcheck="false" />
+            </div>
+            <div class="input-col sm auto-btn-container">
+              <button type="submit" class="btn primary full-width">+ Add Subnet</button>
+            </div>
+          </div>
+          <div id="formErrorMsg" class="field-error"></div>
+        </form>
+
+        <!-- Subnets Table -->
+        <div class="table-container">
+          <table class="subnet-table" id="subnetTable">
+            <thead>
+              <tr>
+                <th>Status</th>
+                <th>Subnet Name &amp; Tier</th>
+                <th>CIDR Block</th>
+                <th>IP Range</th>
+                <th>Usable Hosts</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="subnetTableBody">
+              <!-- Subnet rows inserted here -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Inspector & Code Generator Column -->
+      <section class="sidebar-column card">
+        <div class="tabs-header">
+          <button class="tab-btn active" data-tab="tab-inspector">Inspector</button>
+          <button class="tab-btn" data-tab="tab-free">Free Blocks (<span id="freeBlocksCount">0</span>)</button>
+          <button class="tab-btn" data-tab="tab-code">Infrastructure Code</button>
+        </div>
+
+        <!-- Tab: Inspector -->
+        <div class="tab-pane active" id="tab-inspector">
+          <div id="inspectorEmptyState" class="empty-hint">
+            Select or click any subnet from the list or visual map to inspect binary netmasks, usable hosts, and cloud-reserved addresses.
+          </div>
+          <div id="inspectorContent" style="display:none;">
+            <div class="inspector-header-box">
+              <div>
+                <h3 id="insSubnetName">public-1a</h3>
+                <span id="insSubnetCidr" class="mono-badge">10.0.1.0/24</span>
+              </div>
+              <span id="insSubnetTier" class="tier-pill tier-public">Public</span>
+            </div>
+
+            <div class="details-grid">
+              <div class="detail-item">
+                <span class="d-label">Network Address</span>
+                <span class="d-val mono" id="insNetworkIp">10.0.1.0</span>
+              </div>
+              <div class="detail-item">
+                <span class="d-label">Netmask</span>
+                <span class="d-val mono" id="insNetmask">255.255.255.0</span>
+              </div>
+              <div class="detail-item">
+                <span class="d-label">Wildcard Mask</span>
+                <span class="d-val mono" id="insWildcard">0.0.0.255</span>
+              </div>
+              <div class="detail-item">
+                <span class="d-label">Broadcast IP</span>
+                <span class="d-val mono" id="insBroadcast">10.0.1.255</span>
+              </div>
+              <div class="detail-item full">
+                <span class="d-label">Usable Range</span>
+                <span class="d-val mono text-accent" id="insUsableRange">10.0.1.4 - 10.0.1.254</span>
+              </div>
+              <div class="detail-item">
+                <span class="d-label">Total Addresses</span>
+                <span class="d-val" id="insTotalIps">256</span>
+              </div>
+              <div class="detail-item">
+                <span class="d-label">Usable Hosts</span>
+                <span class="d-val text-success" id="insUsableHosts">251</span>
+              </div>
+            </div>
+
+            <!-- Provider Reserved IP Breakdown -->
+            <div class="reserved-ips-box">
+              <h4>Reserved IP Offsets (<span id="insProviderTitle">AWS</span>)</h4>
+              <ul class="reserved-list" id="insReservedList">
+                <!-- dynamically populated -->
+              </ul>
+            </div>
+
+            <div class="binary-display">
+              <h4>Binary Netmask</h4>
+              <div class="mono-bits" id="insBinaryMask">11111111.11111111.11111111.00000000</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab: Free Space Explorer -->
+        <div class="tab-pane" id="tab-free">
+          <p class="section-sub">Decomposed non-overlapping CIDR blocks ready to assign without conflicts:</p>
+          <div id="freeBlocksList" class="free-blocks-list">
+            <!-- list of free CIDR blocks -->
+          </div>
+        </div>
+
+        <!-- Tab: Code Generator -->
+        <div class="tab-pane" id="tab-code">
+          <div class="code-controls">
+            <div class="format-switch">
+              <button class="fmt-btn active" data-format="tf-aws">Terraform AWS</button>
+              <button class="fmt-btn" data-format="tf-azure">Terraform Azure</button>
+              <button class="fmt-btn" data-format="yaml">Ansible YAML</button>
+              <button class="fmt-btn" data-format="json">JSON</button>
+              <button class="fmt-btn" data-format="csv">CSV</button>
+            </div>
+            <button id="btnCopyCode" class="btn secondary sm">
+              <span id="copyStatusText">Copy Code</span>
+            </button>
+          </div>
+          <pre class="code-viewer"><code id="codeOutput">// Code will appear here</code></pre>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="app-footer">
+    <p>SubnetForge &bull; Client-side CIDR &amp; Subnetting Engine &bull; Private &amp; Offline &bull; No cookies or trackers.</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

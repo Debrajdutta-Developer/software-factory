@@ -16,5 +16,23 @@
     "path": "builds/2026-10-18-har-sanitizer",
     "fingerprint": "eb8a18bcbbc8579f9559",
     "model": "gemini-3.7-flash"
+  },
+  {
+    "released_at": "2026-10-19T08:45:15.931010+00:00",
+    "name": "SubnetForge - Visual CIDR & VPC Architect",
+    "slug": "subnetforge-cidr-architect",
+    "problem": "Designing cloud VPCs and corporate IP address schemes frequently results in overlapping subnets, wasted address capacity, or broken routing because calculating binary subnet boundaries and cloud-provider reserved host offsets by hand is error-prone.",
+    "category": "Developer Tools / Cloud Infrastructure",
+    "features": [
+      "Interactive visual address space map with proportional blocks, unallocated gaps, and collision warnings",
+      "Precise 32-bit IPv4 math engine with automated subnet alignment, validation, and collision detection",
+      "Cloud provider reservation profiles (AWS 5 reserved IPs, GCP 4 reserved, Azure 5 reserved, or standard RFC)",
+      "Subnet splitting and defragmentation tools to divide or auto-pack allocations into optimal CIDR blocks",
+      "One-click code generation for Terraform AWS/Azure/GCP modules, Ansible YAML, JSON, and CSV",
+      "Local-first persistence via LocalStorage and instant JSON configuration backup and restore"
+    ],
+    "path": "builds/2026-10-19-subnetforge-cidr-architect",
+    "fingerprint": "fa722c0aef008da90133",
+    "model": "gemini-3.7-flash"
   }
 ]
